@@ -1,0 +1,25 @@
+{
+  "name": "videocards",
+  "version": "1.0.0",
+  "description": "Automatically generate language-learning flashcards from video and subtitle files",
+  "preferGlobal": true,
+  "bin": {
+    "gencards": "index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mitchconquer/videocards.git"
+  },
+  "author": "Mitch Conquer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mitchconquer/videocards/issues"
+  },
+  "homepage": "https://github.com/mitchconquer/videocards#readme",
+  "dependencies": {
+    "fluent-ffmpeg": "^2.1.0"
+  }
+}
