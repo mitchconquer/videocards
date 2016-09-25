@@ -45,7 +45,7 @@ const generateAudio = (subsData) => {
       .on('error', (err) => {
         console.log(chalk.red('An error occurred: ' + err.message));
       })
-      .on('end', () => {
+      .on('start', () => {
         console.log(`${chalk.dim('Processing')} ${fileName}`);
       })
       .run();
