@@ -1,29 +1,57 @@
 #! /usr/bin/env node
 
 const ffmpeg = require('fluent-ffmpeg');
-const Subtitle = require('./src/subtitle.js');
+const subsParser = require('./src/subtitles.js');
+const chalk = require('chalk');
 
 const userArgs = process.argv.slice(2);
-const inputFile = userArgs[0];
-const inputStart = '5:00';
-const duration = '00:30.000';
+const inputVideo = userArgs[0];
+let inputSubs = userArgs[1];
 
-const sub = new Subtitle('testfile.mkv');
+if (!inputSubs) {
+  ffmpeg(inputVideo)
+    .output('output/generated-subs.srt')
+    .noVideo()
+    .noAudio()
+    .outputOptions('-c:s:0 srt')
+    .on('error', (err) => {
+      console.log(chalk.red(`An error occured while generating subtitles. ${err.message}`));
+    })
+    .on('start', () => console.log(chalk.yellow('Extracting subtitles...')))
+    .on('end', () => {
+      console.log(chalk.green('Successfully extracted subtitles'));
+      inputSubs = 'output/generated-subs.srt';
+      generateAudio(subsParser(inputSubs))
+    })
+    .run()
+}
 
-console.log(sub.file);
+if (inputSubs) generateAudio(subsParser(inputSubs));
 
-// ffmpeg(inputFile)
-//   .seekInput(inputStart)
-//   .inputOptions('-vn')
-//   .output(`output/audio-${inputFile}-${inputStart}.mp3`)
-//   .format('mp3')
-//   .duration(duration)
+const generateAudio = (subsData) => {
+  console.log(chalk.yellow('Slicing video file... )xxxxx[;;;;;;;;;>'));
+  subsData.forEach(subItem => {
 
-//   .on('error', (err) => {
-//     console.log('An error occurred: ' + err.message);
-//   })
-//   .on('end', () => {
-//     console.log(`Processing ${inputFile} finished !`);
-//   })
-//   .run();
+    const fileName = `${inputVideo.slice(0, 20)}-${subItem.id}-${subItem.text.slice(0, 30).replace('\\', '')}.mp3`;
+
+    ffmpeg(inputVideo)
+      .seekInput(subItem.startTime)
+      .inputOptions('-vn')
+      .output(`output/${fileName}`)
+      .format('mp3')
+      .outputOptions('-write_xing', 0) // Fixes Mac MP3 length error
+      .duration(subItem.duration)
+
+      .on('error', (err) => {
+        console.log(chalk.red('An error occurred: ' + err.message));
+      })
+      .on('end', () => {
+        console.log(`${chalk.dim('Processing')} ${fileName}`);
+      })
+      .run();
+  });
+};
+
+
+
 
