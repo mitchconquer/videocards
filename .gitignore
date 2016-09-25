@@ -1,3 +1,5 @@
 node_modules
 archer.mkv
 output/*
+*.mkv
+*.mp3
