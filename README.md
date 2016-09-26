@@ -18,3 +18,4 @@ ffmpeg [documentation](https://ffmpeg.org/ffmpeg.html).
 [ ] Shift subtitle tracking foward/backward
 [ ] Export with video or audio
 [ ] Control audio/video quality
+[ ] Branch off and improve subtitle parser
