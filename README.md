@@ -12,6 +12,12 @@ ffmpeg [documentation](https://ffmpeg.org/ffmpeg.html).
 
 ## Ideas
 
+### Immediate
+
+[ ] Move all subtitle related functionality in index.js to subtitles.js
+
+### Features 
+
 [ ] Option to join together subtitles in the same sentence
 [ ] Display all of the embedded subtitle tracks and select one
 [ ] Display all embeded audio tracks and choose one
