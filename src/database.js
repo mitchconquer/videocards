@@ -11,7 +11,7 @@ database.createAnkiDeck = (inputVideo, inputSubs) => {
 
   _createDB(db);
 
-  _insertColValues(db);
+  _insertColValues(db, utils.quickName(inputVideo));
 
 };
 
@@ -120,7 +120,7 @@ const createIndices = [
   'CREATE INDEX ix_revlog_usn on revlog (usn);'
 ];
 
-const _insertColValues = (db) => {
+const _insertColValues = (db, quickName) => {
   const arbitraryTime = Date.now();
 
   db.serialize(() => {
@@ -160,51 +160,74 @@ const _insertColValues = (db) => {
   });
 
   const models = JSON.stringify({
-    css: '',
-    did : arbitraryTime,
-    flds: [
+    `${arbitraryTime}`: 
       {
-        font: 'Arial',
-        media: [],
-        name: 'Media',
-        ord: 0,
-        rtl: false,
-        size: 12,
-        sticky: false
-      },
-      {
-        font: 'Arial',
-        media: [],
-        name: 'Text',
-        ord: 0,
-        rtl: false,
-        size: 12,
-        sticky: false
+        css: '',
+        did : arbitraryTime,
+        flds: [
+          {
+            font: 'Arial',
+            media: [],
+            name: 'Media',
+            ord: 0,
+            rtl: false,
+            size: 12,
+            sticky: false
+          },
+          {
+            font: 'Arial',
+            media: [],
+            name: 'Text',
+            ord: 0,
+            rtl: false,
+            size: 12,
+            sticky: false
+          }
+        ],
+        id: arbitraryTime,
+        latexPost: "\\end{document}",
+        latexPre: "\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n\\begin{document}\n",
+        mod: arbitraryTime,
+        name: "Media Generated Cards",
+        req: [],
+        sortf: 0,
+        tags: '',
+        tmpls: [
+          {
+            name: 'Forward',
+            qfmt: '{{Front}}',
+            did: null,
+            bafmt: ,
+            afmt: "{{FrontSide}}\n\n<hr id=answer/>\n\n{{Back}}",
+            ord: 0,
+            bqfmt: ''
+          }
+        ],
+        type: 0,
+        usn: -1,
+        vers: 0
       }
-    ],
-    id: arbitraryTime,
-    latexPost: "\\end{document}",
-    latexPre: "\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n\\begin{document}\n",
-    mod: arbitraryTime,
-    name: "Media Generated Cards",
-    req: [],
-    sortf: 0,
-    tags: '',
-    tmpls: [
-      {
-        name: 'Forward',
-        qfmt: '{{Front}}',
-        did: null,
-        bafmt: ,
-        afmt: "{{FrontSide}}\n\n<hr id=answer/>\n\n{{Back}}",
-        ord: 0,
-        bqfmt: ''
-      }
-    ],
-    type: 0,
-    usn: -1,
-    vers: 0
   });
+
+  const decks = JSON.stringify([
+    {
+      name: quickName,
+      extendRev: 1000, 
+      usn: arbitraryTime, 
+      collapsed: false, 
+      browserCollapsed: false, 
+      newToday: [10, 0], 
+      timeToday: [10, 0], 
+      dyn: 0, 
+      extendNew: 1000, 
+      conf: 1, 
+      revToday: "two number array used somehow for custom study", 
+      lrnToday: "two number array used somehow for custom study", 
+      id: "deck ID (automatically generated long)", 
+      mod: "last modification time", 
+      desc: "deck description"
+    }
+  ]);
 
 
 };
