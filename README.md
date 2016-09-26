@@ -15,6 +15,7 @@ ffmpeg [documentation](https://ffmpeg.org/ffmpeg.html).
 ### Immediate
 
 [ ] Move all subtitle related functionality in index.js to subtitles.js
+[ ] If the fact that the deck field needs the default deck added first should add that fact to the android wiki page
 
 ### Features 
 
