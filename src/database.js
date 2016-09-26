@@ -137,7 +137,7 @@ const _insertColValues = (db, quickName) => {
     0,                       // usn
     0,                       // ls
     conf,                    // conf
-    models,                  // models
+    JSON.stringify(models),  // models
     JSON.stringify(decks),   // decks
     dconf,                   // dconf
     ""                       // tags
@@ -159,55 +159,53 @@ const _insertColValues = (db, quickName) => {
     collapseTime: 1200
   });
 
-  const models = JSON.stringify({
-    `${arbitraryTime}`: 
+  const models = {};
+  models[arbitraryTime] = {
+    css: '',
+    did : arbitraryTime,
+    flds: [
       {
-        css: '',
-        did : arbitraryTime,
-        flds: [
-          {
-            font: 'Arial',
-            media: [],
-            name: 'Media',
-            ord: 0,
-            rtl: false,
-            size: 12,
-            sticky: false
-          },
-          {
-            font: 'Arial',
-            media: [],
-            name: 'Text',
-            ord: 0,
-            rtl: false,
-            size: 12,
-            sticky: false
-          }
-        ],
-        id: arbitraryTime,
-        latexPost: "\\end{document}",
-        latexPre: "\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n\\begin{document}\n",
-        mod: arbitraryTime,
-        name: "Media Generated Cards",
-        req: [],
-        sortf: 0,
-        tags: '',
-        tmpls: [
-          {
-            name: 'Forward',
-            qfmt: '{{Front}}',
-            did: null,
-            bafmt: ,
-            afmt: "{{FrontSide}}\n\n<hr id=answer/>\n\n{{Back}}",
-            ord: 0,
-            bqfmt: ''
-          }
-        ],
-        type: 0,
-        usn: -1,
-        vers: 0
+        font: 'Arial',
+        media: [],
+        name: 'Media',
+        ord: 0,
+        rtl: false,
+        size: 12,
+        sticky: false
+      },
+      {
+        font: 'Arial',
+        media: [],
+        name: 'Text',
+        ord: 0,
+        rtl: false,
+        size: 12,
+        sticky: false
       }
-  });
+    ],
+    id: arbitraryTime,
+    latexPost: "\\end{document}",
+    latexPre: "\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n\\begin{document}\n",
+    mod: arbitraryTime,
+    name: "Media Generated Cards",
+    req: [],
+    sortf: 0,
+    tags: '',
+    tmpls: [
+      {
+        name: 'Forward',
+        qfmt: '{{Front}}',
+        did: null,
+        bafmt: ,
+        afmt: "{{FrontSide}}\n\n<hr id=answer/>\n\n{{Back}}",
+        ord: 0,
+        bqfmt: ''
+      }
+    ],
+    type: 0,
+    usn: -1,
+    vers: 0
+  };
 
   const decks = {};
   decks[1] = {
