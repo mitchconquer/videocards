@@ -127,21 +127,21 @@ const _insertColValues = (db, quickName) => {
     db.run('INSERT INTO col (id, crt, mod, scm, ver, dty, usn, ls, conf, models, decks, dconf, tags) VALUES (?)', colValues.join(', '))
   });
 
-  const colValues = {
-    id: 0,
-    crt: arbitraryTime,
-    mod: arbitraryTime,
-    scm: arbitraryTime,
-    ver: 1,
-    dty: 0,
-    usn: 0,
-    ls: 0,
-    conf,
-    models,
-    decks: ,
-    dconf: ,
-    tags: 
-  };
+  const colValues = [
+    0,                       // id
+    arbitraryTime,           // crt
+    arbitraryTime,           // mod
+    arbitraryTime,           // scm
+    1,                       // ver
+    0,                       // dty
+    0,                       // usn
+    0,                       // ls
+    conf,                    // conf
+    models,                  // models
+    JSON.stringify(decks),   // decks
+    dconf,                   // dconf
+    ""                       // tags
+  ];
 
   const conf = JSON.stringify({
     nextPos: 1,
@@ -209,27 +209,89 @@ const _insertColValues = (db, quickName) => {
       }
   });
 
-  const decks = JSON.stringify([
-    {
-      name: quickName,
-      extendRev: 1000, 
-      usn: arbitraryTime, 
-      collapsed: false, 
-      browserCollapsed: false, 
-      newToday: [10, 0], 
-      timeToday: [10, 0], 
-      dyn: 0, 
-      extendNew: 1000, 
-      conf: 1, 
-      revToday: "two number array used somehow for custom study", 
-      lrnToday: "two number array used somehow for custom study", 
-      id: "deck ID (automatically generated long)", 
-      mod: "last modification time", 
-      desc: "deck description"
+  const decks = {};
+  decks[1] = {
+    name: 'Default',
+    extendRev: 50,
+    usn: arbitraryTime,
+    collapsed: false,
+    browserCollapsed: false,
+    newToday: [0, 0],
+    timeToday: [0, 0],
+    dyn: 0,
+    extendNew: 10,
+    conf: 1,
+    revToday: [0, 0],
+    lrnToday: [0, 0],
+    id: 1,
+    mod: arbitraryTime,
+    desc: ""
+  };
+
+  decks[arbitraryTime] = {
+    name: quickName,
+    extendRev: 1000,
+    usn: arbitraryTime,
+    collapsed: false,
+    browserCollapsed: false,
+    newToday: [10, 0],
+    timeToday: [10, 0],
+    dyn: 0,
+    extendNew: 1000,
+    conf: 1,
+    revToday: [10, 0],
+    lrnToday: [10, 0],
+    id: arbitraryTime,
+    mod: arbitraryTime,
+    desc: `Automatically generated deck for ${quickName}`
+  };
+
+  const dconf = {
+    "1":{
+       "name":"Default",
+       "replayq":true,
+       "lapse":{
+          "leechFails":8,
+          "minInt":1,
+          "delays":[
+             10
+          ],
+          "leechAction":0,
+          "mult":0
+       },
+       "rev":{
+          "perDay":100,
+          "fuzz":0.05,
+          "ivlFct":1,
+          "maxIvl":36500,
+          "ease4":1.3,
+          "bury":true,
+          "minSpace":1
+       },
+       "timer":0,
+       "maxTaken":60,
+       "usn":0,
+       "new":{
+          "perDay":20,
+          "delays":[
+             1,
+             10
+          ],
+          "separate":true,
+          "ints":[
+             1,
+             4,
+             7
+          ],
+          "initialFactor":2500,
+          "bury":true,
+          "order":1
+       },
+       "mod":0,
+       "id":1,
+       "autoplay":true
     }
-  ]);
-
-
+  };
 };
 
 const colColumns = [
