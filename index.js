@@ -1,9 +1,11 @@
 #! /usr/bin/env node
 
 const ffmpeg = require('fluent-ffmpeg');
-const subsParser = require('./src/subtitles.js');
+const subsParser = require('./src/subtitles');
 const chalk = require('chalk');
-const utils = require('./src/utils.js');
+const utils = require('./src/utils');
+const database = require('./src/database');
+const apkgCreater = require('./src/archiver');
 
 const userArgs = process.argv.slice(2);
 const inputVideo = userArgs[0];
@@ -49,8 +51,15 @@ const generateAudio = (subsData) => {
       .on('start', () => {
         console.log(`${chalk.dim('Processing')} ${fileName}`);
       })
+      .on('end', () => {
+        // Successfully created media files, pack into an Anki file
+        const db = database.createAnkiDeck(inputVideo, inputSubs);
+        apkgCreater(db);
+      })
       .run();
+
   });
+
 };
 
 

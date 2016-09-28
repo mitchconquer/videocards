@@ -5,14 +5,21 @@ const utils = require('./utils');
 const database = {};
 
 database.createAnkiDeck = (inputVideo, inputSubs) => {
-  dbFile = `output/${utils.quickName(inputVideo)}.db`;
-  let exists = fs.statSync(dbFile).isFile();
+  dbFile = `./${utils.quickName(inputVideo)}.db`;
+  // let exists = fs.statSync(dbFile).isFile();
+  console.log('Creating db file...');
+  fs.openSync(dbFile, 'w');
+
   const db = new sqlite.Database(dbFile);
 
   _createDB(db);
 
-  _insertColValues(db, utils.quickName(inputVideo));
+  const arbitraryTime = Date.now();
+  _insertColValues(db, utils.quickName(inputVideo), arbitraryTime);
 
+  db.close();
+
+  return db;
 };
 
 const _createDB = (db) => {
@@ -23,14 +30,6 @@ const _createDB = (db) => {
     createIndices.forEach(createCmd => db.run(createCmd));
   });
 };
-
-const createTables = [
-  createCol,
-  createCards,
-  createGraves,
-  createNotes,
-  createRevlog
-];
 
 const createCol = `
   CREATE TABLE col (
@@ -120,28 +119,15 @@ const createIndices = [
   'CREATE INDEX ix_revlog_usn on revlog (usn);'
 ];
 
-const _insertColValues = (db, quickName) => {
-  const arbitraryTime = Date.now();
+const createTables = [
+  createCol,
+  createCards,
+  createGraves,
+  createNotes,
+  createRevlog
+];
 
-  db.serialize(() => {
-    db.run('INSERT INTO col (id, crt, mod, scm, ver, dty, usn, ls, conf, models, decks, dconf, tags) VALUES (?)', colValues.join(', '))
-  });
-
-  const colValues = [
-    0,                       // id
-    arbitraryTime,           // crt
-    arbitraryTime,           // mod
-    arbitraryTime,           // scm
-    1,                       // ver
-    0,                       // dty
-    0,                       // usn
-    0,                       // ls
-    conf,                    // conf
-    JSON.stringify(models),  // models
-    JSON.stringify(decks),   // decks
-    dconf,                   // dconf
-    ""                       // tags
-  ];
+const _insertColValues = (db, quickName, arbitraryTime) => {
 
   const conf = JSON.stringify({
     nextPos: 1,
@@ -196,7 +182,7 @@ const _insertColValues = (db, quickName) => {
         name: 'Forward',
         qfmt: '{{Front}}',
         did: null,
-        bafmt: ,
+        bafmt: '',
         afmt: "{{FrontSide}}\n\n<hr id=answer/>\n\n{{Back}}",
         ord: 0,
         bqfmt: ''
@@ -208,7 +194,7 @@ const _insertColValues = (db, quickName) => {
   };
 
   const decks = {};
-  decks[1] = {
+  decks['1'] = {
     name: 'Default',
     extendRev: 50,
     usn: arbitraryTime,
@@ -226,7 +212,7 @@ const _insertColValues = (db, quickName) => {
     desc: ""
   };
 
-  decks[arbitraryTime] = {
+  decks[`${arbitraryTime}`] = {
     name: quickName,
     extendRev: 1000,
     usn: arbitraryTime,
@@ -290,10 +276,26 @@ const _insertColValues = (db, quickName) => {
        "autoplay":true
     }
   };
+
+  const colValues = [
+    0,                       // id
+    arbitraryTime,           // crt
+    arbitraryTime,           // mod
+    arbitraryTime,           // scm
+    1,                       // ver
+    0,                       // dty
+    0,                       // usn
+    0,                       // ls
+    conf,                    // conf
+    JSON.stringify(models),  // models
+    JSON.stringify(decks),   // decks
+    dconf,                   // dconf
+    ""                       // tags
+  ];
+
+  db.serialize(() => {
+    db.run('INSERT INTO col (id, crt, mod, scm, ver, dty, usn, ls, conf, models, decks, dconf, tags) VALUES (?)', colValues.join(', '))
+  });
 };
 
-const colColumns = [
-  
-];
-
-module.exports database;
+module.exports = database;
