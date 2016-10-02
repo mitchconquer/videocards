@@ -290,7 +290,7 @@ const _insertColValues = (db, quickName, arbitraryTime) => {
     $crt: arbitraryTime,
     $mod: arbitraryTime,
     $scm: arbitraryTime,
-    $ver: 1,
+    $ver: 11,
     $dty: 0,
     $usn: 0,
     $ls: 0,
