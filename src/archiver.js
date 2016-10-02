@@ -1,22 +1,31 @@
 const fs = require('fs');
 const archiver = require('archiver');
-const utils = require('./utils');
 const chalk = require('chalk');
 
-const apkgCreater = (dbFile) => {
-  const output = fs.createWriteStream(`../output/${utils.quickName(dbFile)}.apkg`);
+const apkgCreater = (dbFile, quickName) => {
+  const output = fs.createWriteStream(`./${quickName}.apkg`);
   const archive = archiver('zip');
 
-  output.on('close', () => {
-    console.log(chalk.green(`${utils.quickName(dbFile)}.apkg has successfully been created`));
-  });
+  // Create empty media file
+  fs.writeFileSync('./pkg/media', '{}');
 
-  archive.on('error', (err) => {throw err});
+  output
+    .on('close', () => {
+      console.log(chalk.green(`${quickName}.apkg has successfully been created`));
+    })
+    .on('error', err => {
+      throw err
+    });
+
+  archive
+    .on('error', (err) => {
+      throw err
+    });
 
   archive.pipe(output);
 
   archive
-    .append(fs.createReadStream(dbFile), { name: `${utils.quickName(dbFile)}`})
+    .directory('./pkg', '')
     .finalize();
 };
 

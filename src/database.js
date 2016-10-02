@@ -1,28 +1,41 @@
 const sqlite = require('sqlite3').verbose();
 const fs = require('fs');
 const utils = require('./utils');
+const apkgCreater = require('./archiver');
+const chalk = require('chalk');
 
 const database = {};
 
 database.createAnkiDeck = (inputVideo, inputSubs) => {
-  dbFile = `./${utils.quickName(inputVideo)}.db`;
-  // let exists = fs.statSync(dbFile).isFile();
+  dbFile = `./pkg/collection.anki2`;
   console.log('Creating db file...');
-  fs.openSync(dbFile, 'w');
+
+  const fileDescriptor = fs.openSync(dbFile, 'w');
 
   const db = new sqlite.Database(dbFile);
+
+  // Print out executed statements and execution duration in mSecs
+  db.on('profile', (query, execDuration) => {
+    console.log(`${query.slice(0, 20).trim()}... [ ${execDuration}ms ]`);
+  });
+  db.on('error', err => {throw err;});
 
   _createDB(db);
 
   const arbitraryTime = Date.now();
   _insertColValues(db, utils.quickName(inputVideo), arbitraryTime);
 
-  db.close();
-
-  return db;
+  // Returns function that will be called with the database file reference and collection 'quickname' when the db is closed
+  return (callback) => {
+    db.close(() => {
+      fs.closeSync(fileDescriptor);
+      callback(dbFile, utils.quickName(inputVideo));
+    });
+  };
 };
 
 const _createDB = (db) => {
+
   db.serialize(() => {
     // Create all tables
     createTables.forEach(createCmd => db.run(createCmd));
@@ -52,6 +65,7 @@ const createCol = `
 const createCards = `
   CREATE TABLE cards (
     id       integer primary key,
+    nid      integer not null,
     did      integer not null,
     ord      integer not null,
     mod      integer not null,
@@ -141,12 +155,12 @@ const _insertColValues = (db, quickName, arbitraryTime) => {
     newBury: true,
     newSpread: 0,
     dueCounts: true,
-    curModel: arbitraryTime,
+    curModel: `${arbitraryTime}`,
     collapseTime: 1200
   });
 
   const models = {};
-  models[arbitraryTime] = {
+  models[`${arbitraryTime}`] = {
     css: '',
     did : arbitraryTime,
     flds: [
@@ -170,34 +184,34 @@ const _insertColValues = (db, quickName, arbitraryTime) => {
       }
     ],
     id: arbitraryTime,
-    latexPost: "\\end{document}",
-    latexPre: "\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n\\begin{document}\n",
-    mod: arbitraryTime,
+    latexPost: "\\\\end{document}", // added two extra `\`
+    latexPre: "\\\\documentclass[12pt]{article}\n\\\\special{papersize=3in,5in}\n\\\\usepackage{amssymb,amsmath}\n\\\\pagestyle{empty}\n\\\\setlength{\\\\parindent}{0in}\n\\\\begin{document}\n",
+    mod: arbitraryTime, // This is string in ex...
     name: "Media Generated Cards",
-    req: [],
-    sortf: 0,
-    tags: '',
+    req: [], // Array of arrays, ie:  `[[0, "any", [0, 3, 6]]],`
+    sortf: 1, // was 0
+    tags: [], // empty array
     tmpls: [
       {
         name: 'Forward',
-        qfmt: '{{Front}}',
+        qfmt: '{{Media}}',
         did: null,
         bafmt: '',
-        afmt: "{{FrontSide}}\n\n<hr id=answer/>\n\n{{Back}}",
+        afmt: "{{FrontSide}}\n\n<hr />\n\n<div id='answer'>{{Text}}</div>",
         ord: 0,
         bqfmt: ''
       }
     ],
     type: 0,
-    usn: -1,
-    vers: 0
+    usn: 0,
+    vers: [] // empty array []
   };
 
   const decks = {};
   decks['1'] = {
     name: 'Default',
     extendRev: 50,
-    usn: arbitraryTime,
+    usn: 0, // was `arbitraryTime`
     collapsed: false,
     browserCollapsed: false,
     newToday: [0, 0],
@@ -208,16 +222,16 @@ const _insertColValues = (db, quickName, arbitraryTime) => {
     revToday: [0, 0],
     lrnToday: [0, 0],
     id: 1,
-    mod: arbitraryTime,
+    mod: 1425168760, // was `arbitraryTime`
     desc: ""
   };
 
   decks[`${arbitraryTime}`] = {
     name: quickName,
     extendRev: 1000,
-    usn: arbitraryTime,
+    usn: 0, // was `arbitraryTime`
     collapsed: false,
-    browserCollapsed: false,
+    browserCollapsed: true, // was false
     newToday: [10, 0],
     timeToday: [10, 0],
     dyn: 0,
@@ -226,24 +240,25 @@ const _insertColValues = (db, quickName, arbitraryTime) => {
     revToday: [10, 0],
     lrnToday: [10, 0],
     id: arbitraryTime,
+    mid: `${arbitraryTime}`, // was not included
     mod: arbitraryTime,
     desc: `Automatically generated deck for ${quickName}`
   };
 
   const dconf = {
     "1":{
-       "name":"Default",
-       "replayq":true,
-       "lapse":{
+       "name": "Default",
+       "replayq": true,
+       "lapse": 
+        {
           "leechFails":8,
           "minInt":1,
-          "delays":[
-             10
-          ],
+          "delays":[10],
           "leechAction":0,
           "mult":0
-       },
-       "rev":{
+         },
+       "rev":
+         {
           "perDay":100,
           "fuzz":0.05,
           "ivlFct":1,
@@ -251,22 +266,15 @@ const _insertColValues = (db, quickName, arbitraryTime) => {
           "ease4":1.3,
           "bury":true,
           "minSpace":1
-       },
+         },
        "timer":0,
        "maxTaken":60,
        "usn":0,
        "new":{
           "perDay":20,
-          "delays":[
-             1,
-             10
-          ],
+          "delays":[1, 10],
           "separate":true,
-          "ints":[
-             1,
-             4,
-             7
-          ],
+          "ints":[1, 4, 7],
           "initialFactor":2500,
           "bury":true,
           "order":1
@@ -277,24 +285,24 @@ const _insertColValues = (db, quickName, arbitraryTime) => {
     }
   };
 
-  const colValues = [
-    0,                       // id
-    arbitraryTime,           // crt
-    arbitraryTime,           // mod
-    arbitraryTime,           // scm
-    1,                       // ver
-    0,                       // dty
-    0,                       // usn
-    0,                       // ls
-    conf,                    // conf
-    JSON.stringify(models),  // models
-    JSON.stringify(decks),   // decks
-    dconf,                   // dconf
-    ""                       // tags
-  ];
+  const colValues = {
+    $id: 0,
+    $crt: arbitraryTime,
+    $mod: arbitraryTime,
+    $scm: arbitraryTime,
+    $ver: 1,
+    $dty: 0,
+    $usn: 0,
+    $ls: 0,
+    $conf: conf,
+    $models: JSON.stringify(models),
+    $decks: JSON.stringify(decks),
+    $dconf: JSON.stringify(dconf),
+    $tags: "{}" // was just ''
+  };
 
   db.serialize(() => {
-    db.run('INSERT INTO col (id, crt, mod, scm, ver, dty, usn, ls, conf, models, decks, dconf, tags) VALUES (?)', colValues.join(', '))
+    db.run('INSERT INTO col (id, crt, mod, scm, ver, dty, usn, ls, conf, models, decks, dconf, tags) VALUES ($id, $crt, $mod, $scm, $ver, $dty, $usn, $ls, $conf, $models, $decks, $dconf, $tags)', colValues);
   });
 };
 

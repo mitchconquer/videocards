@@ -51,15 +51,12 @@ const generateAudio = (subsData) => {
       .on('start', () => {
         console.log(`${chalk.dim('Processing')} ${fileName}`);
       })
-      .on('end', () => {
-        // Successfully created media files, pack into an Anki file
-        const db = database.createAnkiDeck(inputVideo, inputSubs);
-        apkgCreater(db);
-      })
       .run();
 
   });
 
+    const onFinishDb = database.createAnkiDeck(inputVideo, inputSubs);
+    onFinishDb(apkgCreater);
 };
 
 
