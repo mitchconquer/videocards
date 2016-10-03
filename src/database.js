@@ -3,10 +3,11 @@ const fs = require('fs');
 const utils = require('./utils');
 const apkgCreater = require('./archiver');
 const chalk = require('chalk');
+const crypto = require('crypto');
 
 const database = {};
 
-database.createAnkiDeck = (inputVideo, inputSubs) => {
+database.createAnkiDeck = (inputVideo, noteData) => {
   dbFile = `./pkg/collection.anki2`;
   console.log('Creating db file...');
 
@@ -25,6 +26,8 @@ database.createAnkiDeck = (inputVideo, inputSubs) => {
   const arbitraryTime = Date.now();
   _insertColValues(db, utils.quickName(inputVideo), arbitraryTime);
 
+  _addCards(db, noteData, arbitraryTime);
+
   // Returns function that will be called with the database file reference and collection 'quickname' when the db is closed
   return (callback) => {
     db.close(() => {
@@ -32,6 +35,55 @@ database.createAnkiDeck = (inputVideo, inputSubs) => {
       callback(dbFile, utils.quickName(inputVideo));
     });
   };
+};
+
+const _addCards = (db, noteData, modelId) => {
+  db.serialize(() => {
+    noteData.forEach(fields => {
+      const hash = crypto.createHash('sha256').update(fields.media);
+      const csum = parseInt(hash.digest('hex').slice(0,8), 16);
+      const id = parseInt(Date.now()) + Math.floor((Math.random() * 100000000));
+      const mod = parseInt(Date.now()) + Math.floor((Math.random() * 100000000));
+      console.log(id);
+      const note = {
+        $id: id,
+        $guid: utils.getGuid(),
+        $mid: modelId,
+        $mod: mod,
+        $usn: 0,
+        $tags: '',
+        $flds: `${fields.media}${fields.text}`,
+        $sfld: fields.text,
+        $csum: csum,
+        $flags: 0,
+        $data: ''
+      };
+
+      db.run('INSERT INTO notes VALUES ($id, $guid, $mid, $mod, $usn, $tags, $flds, $sfld, $csum, $flags, $data)', note); 
+
+      const card = {
+        $id: id,
+        $nid: id,
+        $did: modelId,
+        $ord: 0,
+        $mod: mod,
+        $usn: 0,
+        $type: 0,
+        $queue: 0,
+        $due: Date.now(),
+        $ivl: 0,
+        $factor: 0,
+        $reps: 0,
+        $lapses: 0,
+        $left: 0,
+        $odue: 0,
+        $odid: 0,
+        $flags: 0,
+        $data: ''
+      };
+
+      db.run('INSERT INTO cards VALUES ($id, $nid, $did, $ord, $mod, $usn, $type, $queue, $due, $ivl, $factor, $reps, $lapses, $left, $odue, $odid, $flags, $data)', card); });
+  });
 };
 
 const _createDB = (db) => {
@@ -167,7 +219,7 @@ const _insertColValues = (db, quickName, arbitraryTime) => {
       {
         font: 'Arial',
         media: [],
-        name: 'Media',
+        name: 'media',
         ord: 0,
         rtl: false,
         size: 12,
@@ -176,7 +228,7 @@ const _insertColValues = (db, quickName, arbitraryTime) => {
       {
         font: 'Arial',
         media: [],
-        name: 'Text',
+        name: 'text',
         ord: 0,
         rtl: false,
         size: 12,
@@ -194,12 +246,12 @@ const _insertColValues = (db, quickName, arbitraryTime) => {
     tmpls: [
       {
         name: 'Forward',
-        qfmt: '{{Media}}',
+        qfmt: '{{media}}',
         did: null,
         bafmt: '',
-        afmt: "{{FrontSide}}\n\n<hr />\n\n<div id='answer'>{{Text}}</div>",
+        afmt: "{{FrontSide}}\n\n<hr />\n\n<div id='answer'>{{text}}</div>",
         ord: 0,
-        bqfmt: ''
+        bqfmt: '{{media}}'
       }
     ],
     type: 0,

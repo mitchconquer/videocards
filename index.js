@@ -33,6 +33,8 @@ if (inputSubs) generateAudio(subsParser(inputSubs));
 
 const generateAudio = (subsData) => {
   console.log(chalk.yellow('Slicing video file... )xxxxx[;;;;;;;;;>'));
+  const noteData = [];
+
   subsData.forEach(subItem => {
 
     const fileName = `${utils.quickName(inputVideo).slice(0, 20)}-${utils.padZeros(subItem.id)}-${subItem.text.slice(0, 30).replace('\\', '')}.mp3`;
@@ -53,12 +55,9 @@ const generateAudio = (subsData) => {
       })
       .run();
 
+    noteData.push({text: subItem.text, media: fileName});
   });
 
-    const onFinishDb = database.createAnkiDeck(inputVideo, inputSubs);
-    onFinishDb(apkgCreater);
+  const onFinishDb = database.createAnkiDeck(inputVideo, noteData);
+  onFinishDb(apkgCreater);
 };
-
-
-
-
