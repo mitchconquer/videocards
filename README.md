@@ -6,6 +6,8 @@ Install [ffmpeg](http://ffmpeg.org/): `brew install ffmpeg` (note you must have 
 
 Run `npm link` in the project directory to install the script
 
+Run `gencards videofile [subsfile]`
+
 ## Notes
 
 ffmpeg [documentation](https://ffmpeg.org/ffmpeg.html).
@@ -14,16 +16,16 @@ ffmpeg [documentation](https://ffmpeg.org/ffmpeg.html).
 
 ### Immediate
 
-[ ] Move all subtitle related functionality in index.js to subtitles.js
-[ ] If the fact that the deck field needs the default deck added first should add that fact to the android wiki page
+- [ ] Move all subtitle related functionality in index.js to subtitles.js
+- [ ] If the fact that the deck field needs the default deck added first should add that fact to the android wiki page
 
 ### Features 
 
-[ ] Option to join together subtitles in the same sentence
-[ ] Display all of the embedded subtitle tracks and select one
-[ ] Display all embeded audio tracks and choose one
-[ ] Shift subtitle tracking foward/backward
-[ ] Export with video or audio
-[ ] Control audio/video quality
-[ ] Branch off and improve subtitle parser
-[ ] Option to name deck separately from video file
+- [ ] Option to join together subtitles in the same sentence
+- [ ] Display all of the embedded subtitle tracks and select one
+- [ ] Display all embeded audio tracks and choose one
+- [ ] Shift subtitle tracking foward/backward
+- [ ] Export with video or audio
+- [ ] Control audio/video quality
+- [ ] Branch off and improve subtitle parser
+- [ ] Option to name deck separately from video file
