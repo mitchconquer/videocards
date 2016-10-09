@@ -42,7 +42,7 @@ const generateAudio = (subsData) => {
     ffmpeg(inputVideo)
       .seekInput(subItem.startTime)
       .inputOptions('-vn')
-      .output(`output/${fileName}`)
+      .output(`pkg/${fileName}`)
       .format('mp3')
       .outputOptions('-write_xing', 0) // Fixes Mac MP3 length error
       .duration(subItem.duration)
