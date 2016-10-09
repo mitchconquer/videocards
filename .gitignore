@@ -5,3 +5,4 @@ output/*.mp3
 *.mp3
 *.srt
 pkg/collection.anki2
+*.apkg
