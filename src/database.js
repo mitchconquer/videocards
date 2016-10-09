@@ -15,10 +15,6 @@ database.createAnkiDeck = (inputVideo, noteData) => {
 
   const db = new sqlite.Database(dbFile);
 
-  // Print out executed statements and execution duration in mSecs
-  db.on('profile', (query, execDuration) => {
-    console.log(`${query.slice(0, 20).trim()}... [ ${execDuration}ms ]`);
-  });
   db.on('error', err => {throw err;});
 
   _createDB(db);
@@ -44,7 +40,6 @@ const _addCards = (db, noteData, modelId) => {
       const csum = parseInt(hash.digest('hex').slice(0,8), 16);
       const id = parseInt(Date.now()) + Math.floor((Math.random() * 100000000));
       const mod = parseInt(Date.now()) + Math.floor((Math.random() * 100000000));
-      console.log(id);
       const note = {
         $id: id,
         $guid: utils.getGuid(),
@@ -52,8 +47,8 @@ const _addCards = (db, noteData, modelId) => {
         $mod: mod,
         $usn: 0,
         $tags: '',
-        $flds: `${fields.media}${fields.text}`,
-        $sfld: fields.text,
+        $flds: `${mod}${String.fromCharCode(31)}${fields.text}`,
+        $sfld: fields.media,
         $csum: csum,
         $flags: 0,
         $data: ''
@@ -217,27 +212,27 @@ const _insertColValues = (db, quickName, arbitraryTime) => {
     did : arbitraryTime,
     flds: [
       {
+        name: 'Front',
         font: 'Arial',
         media: [],
-        name: 'media',
         ord: 0,
         rtl: false,
         size: 12,
         sticky: false
       },
       {
+        name: 'Back',
         font: 'Arial',
         media: [],
-        name: 'text',
-        ord: 0,
+        ord: 1,
         rtl: false,
         size: 12,
         sticky: false
       }
     ],
     id: arbitraryTime,
-    latexPost: "\\\\end{document}", // added two extra `\`
-    latexPre: "\\\\documentclass[12pt]{article}\n\\\\special{papersize=3in,5in}\n\\\\usepackage{amssymb,amsmath}\n\\\\pagestyle{empty}\n\\\\setlength{\\\\parindent}{0in}\n\\\\begin{document}\n",
+    latexPost: "\\end{document}", // added two extra `\`
+    latexPre: "\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\begin{document}\n",
     mod: arbitraryTime, // This is string in ex...
     name: "Media Generated Cards",
     req: [], // Array of arrays, ie:  `[[0, "any", [0, 3, 6]]],`
@@ -245,13 +240,22 @@ const _insertColValues = (db, quickName, arbitraryTime) => {
     tags: [], // empty array
     tmpls: [
       {
-        name: 'Forward',
-        qfmt: '{{media}}',
+        name: "Cardify v0.1 Default",
+        qfmt: "<div id='media'>{{Front}}</div>",
         did: null,
-        bafmt: '',
-        afmt: "{{FrontSide}}\n\n<hr />\n\n<div id='answer'>{{text}}</div>",
-        ord: 0,
-        bqfmt: '{{media}}'
+        bafmt: "{{Back}}",
+        afmt: "{{FrontSide}}\n\n<hr id='answer' />\n\n<div class='answer'>{{Back}}</div>",
+        ord: 1,
+        bqfmt: "{{Front}}"
+      },
+      {
+        "name": "Reading",
+        "qfmt": "<div style='font-family: MS Mincho, Arial; font-size: 24px;'>{{Front}}</div>\n",
+        "did": null,
+        "bafmt": "",
+        "afmt": "<div style='font-family: MS Mincho,Arial; font-size: 24px;'>{{Back}}</div>",
+        "ord": 0,
+        "bqfmt": ""
       }
     ],
     type: 0,

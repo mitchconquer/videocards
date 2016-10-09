@@ -20,7 +20,7 @@ if (!inputSubs) {
     .on('error', (err) => {
       console.log(chalk.red(`An error occured while generating subtitles. ${err.message}`));
     })
-    .on('start', () => console.log(chalk.yellow('Extracting subtitles...')))
+    .on('start', () => console.log('Extracting subtitles...'))
     .on('end', () => {
       console.log(chalk.green('Successfully extracted subtitles'));
       inputSubs = `output/${utils.quickName(inputVideo)}.srt`;
@@ -32,7 +32,7 @@ if (!inputSubs) {
 if (inputSubs) generateAudio(subsParser(inputSubs));
 
 const generateAudio = (subsData) => {
-  console.log(chalk.yellow('Slicing video file... )xxxxx[;;;;;;;;;>'));
+  console.log('Slicing video file... )xxxxx[;;;;;;;;;>');
   const noteData = [];
 
   subsData.forEach(subItem => {
@@ -51,7 +51,7 @@ const generateAudio = (subsData) => {
         console.log(chalk.red('An error occurred: ' + err.message));
       })
       .on('start', () => {
-        console.log(`${chalk.dim('Processing')} ${fileName}`);
+        // console.log(`${chalk.dim('Processing')} ${fileName}`);
       })
       .run();
 
