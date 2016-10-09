@@ -24,6 +24,8 @@ database.createAnkiDeck = (inputVideo, noteData) => {
 
   _addCards(db, noteData, arbitraryTime);
 
+  _addMedia(noteData);
+
   // Returns function that will be called with the database file reference and collection 'quickname' when the db is closed
   return (callback) => {
     db.close(() => {
@@ -31,6 +33,16 @@ database.createAnkiDeck = (inputVideo, noteData) => {
       callback(dbFile, utils.quickName(inputVideo));
     });
   };
+};
+
+const _addMedia = (noteData) => {
+  // Create object of media file data
+  const mediaData = {};
+  let index = 0;
+  noteData.forEach(note => {
+    mediaData[`${index++}`] = note.media;
+  });
+  fs.writeFileSync('./pkg/media', JSON.stringify(mediaData));
 };
 
 const _addCards = (db, noteData, modelId) => {
