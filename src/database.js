@@ -47,8 +47,8 @@ const _addCards = (db, noteData, modelId) => {
         $mod: mod,
         $usn: 0,
         $tags: '',
-        $flds: `${mod}${String.fromCharCode(31)}${fields.text}`,
-        $sfld: fields.media,
+        $flds: `${fields.media}${String.fromCharCode(31)}${fields.text}`,
+        $sfld: '${fields.media}',
         $csum: csum,
         $flags: 0,
         $data: ''
@@ -235,7 +235,7 @@ const _insertColValues = (db, quickName, arbitraryTime) => {
     latexPre: "\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\begin{document}\n",
     mod: arbitraryTime, // This is string in ex...
     name: "Media Generated Cards",
-    req: [], // Array of arrays, ie:  `[[0, "any", [0, 3, 6]]],`
+    req: [[0, "any", [0, 3, 6]]], // Array of arrays, ie:  `[[0, "any", [0, 3, 6]]],`
     sortf: 1, // was 0
     tags: [], // empty array
     tmpls: [
@@ -245,17 +245,8 @@ const _insertColValues = (db, quickName, arbitraryTime) => {
         did: null,
         bafmt: "{{Back}}",
         afmt: "{{FrontSide}}\n\n<hr id='answer' />\n\n<div class='answer'>{{Back}}</div>",
-        ord: 1,
+        ord: 0,
         bqfmt: "{{Front}}"
-      },
-      {
-        "name": "Reading",
-        "qfmt": "<div style='font-family: MS Mincho, Arial; font-size: 24px;'>{{Front}}</div>\n",
-        "did": null,
-        "bafmt": "",
-        "afmt": "<div style='font-family: MS Mincho,Arial; font-size: 24px;'>{{Back}}</div>",
-        "ord": 0,
-        "bqfmt": ""
       }
     ],
     type: 0,
