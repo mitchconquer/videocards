@@ -4,3 +4,4 @@ output/*.mp3
 *.mkv
 *.mp3
 *.srt
+pkg/collection.anki2

@@ -235,7 +235,7 @@ const _insertColValues = (db, quickName, arbitraryTime) => {
     latexPre: "\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\begin{document}\n",
     mod: arbitraryTime, // This is string in ex...
     name: "Media Generated Cards",
-    req: [[0, "any", [0, 3, 6]]], // Array of arrays, ie:  `[[0, "any", [0, 3, 6]]],`
+    req: [[0, "any", [0, 1]]], // Array of arrays, ie:  `[[0, "any", [0, 3, 6]]],`
     sortf: 1, // was 0
     tags: [], // empty array
     tmpls: [
