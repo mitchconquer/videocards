@@ -52,7 +52,7 @@ const _addCards = (db, noteData, modelId) => {
       const csum = parseInt(hash.digest('hex').slice(0,8), 16);
       const id = parseInt(Date.now()) + Math.floor((Math.random() * 100000000));
       const mod = parseInt(Date.now()) + Math.floor((Math.random() * 100000000));
-      // console.log(chalk.blue(thing));
+
       const note = {
         $id: id,
         $guid: utils.getGuid(),
@@ -66,7 +66,6 @@ const _addCards = (db, noteData, modelId) => {
         $flags: 0,
         $data: ''
       };
-      
 
       db.run('INSERT INTO notes VALUES ($id, $guid, $mid, $mod, $usn, $tags, $flds, $sfld, $csum, $flags, $data)', note); 
 

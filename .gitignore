@@ -6,3 +6,4 @@ output/*.mp3
 *.srt
 pkg/collection.anki2
 *.apkg
+pkg/*
