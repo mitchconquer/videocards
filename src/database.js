@@ -8,6 +8,7 @@ const crypto = require('crypto');
 const database = {};
 
 database.createAnkiDeck = (inputVideo, noteData) => {
+  // noteData = [{text: 'test text', media: 'archer_00011.mp3', index: 0}];
   dbFile = `./pkg/collection.anki2`;
   console.log('Creating db file...');
 
@@ -38,9 +39,8 @@ database.createAnkiDeck = (inputVideo, noteData) => {
 const _addMedia = (noteData) => {
   // Create object of media file data
   const mediaData = {};
-  let index = 0;
   noteData.forEach(note => {
-    mediaData[`${index++}`] = note.media;
+    mediaData[`${note.index}`] = note.media;
   });
   fs.writeFileSync('./pkg/media', JSON.stringify(mediaData));
 };
@@ -52,6 +52,7 @@ const _addCards = (db, noteData, modelId) => {
       const csum = parseInt(hash.digest('hex').slice(0,8), 16);
       const id = parseInt(Date.now()) + Math.floor((Math.random() * 100000000));
       const mod = parseInt(Date.now()) + Math.floor((Math.random() * 100000000));
+      // console.log(chalk.blue(thing));
       const note = {
         $id: id,
         $guid: utils.getGuid(),
@@ -59,12 +60,13 @@ const _addCards = (db, noteData, modelId) => {
         $mod: mod,
         $usn: 0,
         $tags: '',
-        $flds: `${fields.media}${String.fromCharCode(31)}${fields.text}`,
-        $sfld: '${fields.media}',
+        $flds: `[sound:${fields.media}]${String.fromCharCode(31)}${fields.text}`,
+        $sfld: `${fields.media}`,
         $csum: csum,
         $flags: 0,
         $data: ''
       };
+      
 
       db.run('INSERT INTO notes VALUES ($id, $guid, $mid, $mod, $usn, $tags, $flds, $sfld, $csum, $flags, $data)', note); 
 
