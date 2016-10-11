@@ -7,7 +7,7 @@ const generateAudio = (inputVideo, subsData) => {
   return new Bromise((resolve, reject) => {
     console.log('Slicing video file... )xxxxx[;;;;;;;;;>');
     const noteData = [];
-    // This should use Bromise.each
+
     subsData.forEach((subItem, index) => {
       noteData.push(
         _mp3Promise(inputVideo, subItem, index)
