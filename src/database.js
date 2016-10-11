@@ -8,6 +8,7 @@ const crypto = require('crypto');
 const database = {};
 
 database.createAnkiDeck = (inputVideo, noteData) => {
+  // noteData = [{text: 'test text', media: 'archer_00011.mp3', index: 0}];
   dbFile = `./pkg/collection.anki2`;
   console.log('Creating db file...');
 
@@ -24,6 +25,8 @@ database.createAnkiDeck = (inputVideo, noteData) => {
 
   _addCards(db, noteData, arbitraryTime);
 
+  _addMedia(noteData);
+
   // Returns function that will be called with the database file reference and collection 'quickname' when the db is closed
   return (callback) => {
     db.close(() => {
@@ -33,6 +36,15 @@ database.createAnkiDeck = (inputVideo, noteData) => {
   };
 };
 
+const _addMedia = (noteData) => {
+  // Create object of media file data
+  const mediaData = {};
+  noteData.forEach(note => {
+    mediaData[`${note.index}`] = note.media;
+  });
+  fs.writeFileSync('./pkg/media', JSON.stringify(mediaData));
+};
+
 const _addCards = (db, noteData, modelId) => {
   db.serialize(() => {
     noteData.forEach(fields => {
@@ -40,6 +52,7 @@ const _addCards = (db, noteData, modelId) => {
       const csum = parseInt(hash.digest('hex').slice(0,8), 16);
       const id = parseInt(Date.now()) + Math.floor((Math.random() * 100000000));
       const mod = parseInt(Date.now()) + Math.floor((Math.random() * 100000000));
+
       const note = {
         $id: id,
         $guid: utils.getGuid(),
@@ -47,8 +60,8 @@ const _addCards = (db, noteData, modelId) => {
         $mod: mod,
         $usn: 0,
         $tags: '',
-        $flds: `${fields.media}${String.fromCharCode(31)}${fields.text}`,
-        $sfld: '${fields.media}',
+        $flds: `[sound:${fields.media}]${String.fromCharCode(31)}${fields.text}`,
+        $sfld: `${fields.media}`,
         $csum: csum,
         $flags: 0,
         $data: ''
