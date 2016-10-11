@@ -31,8 +31,28 @@ if (!inputSubs) {
       () => {utils.rmFiles('./output');}
     )
     .catch(
-      err => console.log('A big error occured', err)
+      err => console.log('A big ol\' error occured', err)
     );
 }
 
-if (inputSubs) generateAudio(subtitles.subsTransform(inputSubs));
+if (inputSubs) {
+  subtitles.subsTransform(inputSubs)
+    .then(
+      subsData => generateAudio(inputVideo, subsData)
+    )
+    .then(
+      noteData => createAnkiDb(inputVideo, noteData)
+    )
+    .then(
+      dbFile => apkgCreater(dbFile, utils.quickName(inputVideo))
+    )
+    .then(
+      () => {utils.rmFiles('./pkg');}
+    )
+    .then(
+      () => {utils.rmFiles('./output');}
+    )
+    .catch(
+      err => console.log('A big ol\' error occured', err)
+    );
+}

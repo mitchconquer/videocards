@@ -10,17 +10,19 @@ const endBuffer = 200;
 const subtitles = {};
 
 subtitles.subsTransform = (inputSubs) => {
-  const subFile = fs.readFileSync(inputSubs,'utf8');
-  const subsData = subsParser.fromSrt(subFile);
+  return new Bromise((resolve, reject) => {
+    const subFile = fs.readFileSync(inputSubs,'utf8');
+    const subsData = subsParser.fromSrt(subFile);
 
-  return subsData.map(subItem => {
-    return {
-      id: parseInt(subItem.id),
-      duration: _getDurationInSeconds(subItem.startTime, subItem.endTime),
-      startTime: subItem.startTime.replace(',', '.'),
-      endTime: subItem.endTime.replace(',', '.'),
-      text: subItem.text.replace('\n', ' ')
-    };
+    resolve(subsData.map(subItem => {
+      return {
+        id: parseInt(subItem.id),
+        duration: _getDurationInSeconds(subItem.startTime, subItem.endTime),
+        startTime: subItem.startTime.replace(',', '.'),
+        endTime: subItem.endTime.replace(',', '.'),
+        text: subItem.text.replace('\n', ' ')
+      };
+    }));
   });
 };
 
