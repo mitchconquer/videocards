@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 module.exports = {
   quickName: (videoPath) => {
     const regex = /(.*\/)*(.*)\.(.{0,4})/;
@@ -19,5 +21,29 @@ module.exports = {
       const v = char === 'x' ? r : (r&0x3|0x8);
       return v.toString(16);
     });
+  },
+  rmFiles: (dir) => {
+    // try {
+
+      const files = fs.readdirSync(dir);
+      console.log(`./pkg has ${files.length} files`)
+    // }
+    // catch(err) {
+    //   return;
+    // }
+
+    if (files.length > 0) {
+      files.forEach(file => {
+        const filePath = `${dir}/${file}`;
+        if (fs.statSync(filePath).isFile()) {
+          fs.unlinkSync(filePath);
+        }
+        else if (fs.statSync(filePath).isDirectory()) {
+          this.rmFiles(filePath);
+        }
+      });
+    }
+
+    console.log(`./pkg now has ${fs.readdirSync(dir).length} files`)
   }
 };
