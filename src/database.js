@@ -4,36 +4,33 @@ const utils = require('./utils');
 const apkgCreater = require('./archiver');
 const chalk = require('chalk');
 const crypto = require('crypto');
+const Bromise = require('bluebird');
 
-const database = {};
+const createAnkiDb = (inputVideo, noteData) => {
+  return new Bromise((resolve, reject) => {
+    dbFile = `./pkg/collection.anki2`;
+    console.log('Creating db file...');
 
-database.createAnkiDeck = (inputVideo, noteData) => {
-  // noteData = [{text: 'test text', media: 'archer_00011.mp3', index: 0}];
-  dbFile = `./pkg/collection.anki2`;
-  console.log('Creating db file...');
+    const fileDescriptor = fs.openSync(dbFile, 'w');
 
-  const fileDescriptor = fs.openSync(dbFile, 'w');
+    const db = new sqlite.Database(dbFile);
 
-  const db = new sqlite.Database(dbFile);
+    db.on('error', err => {throw err;});
 
-  db.on('error', err => {throw err;});
+    _createDB(db);
 
-  _createDB(db);
+    const arbitraryTime = Date.now();
+    _insertColValues(db, utils.quickName(inputVideo), arbitraryTime);
 
-  const arbitraryTime = Date.now();
-  _insertColValues(db, utils.quickName(inputVideo), arbitraryTime);
+    _addCards(db, noteData, arbitraryTime);
 
-  _addCards(db, noteData, arbitraryTime);
+    _addMedia(noteData);
 
-  _addMedia(noteData);
-
-  // Returns function that will be called with the database file reference and collection 'quickname' when the db is closed
-  return (callback) => {
     db.close(() => {
       fs.closeSync(fileDescriptor);
-      callback(dbFile, utils.quickName(inputVideo));
+      resolve(dbFile);
     });
-  };
+  });
 };
 
 const _addMedia = (noteData) => {
@@ -366,4 +363,4 @@ const _insertColValues = (db, quickName, arbitraryTime) => {
   });
 };
 
-module.exports = database;
+module.exports = createAnkiDb;
