@@ -25,7 +25,10 @@ if (!inputSubs) {
       dbFile => apkgCreater(dbFile, utils.quickName(inputVideo))
     )
     .then(
-      // () => {utils.rmFiles('./pkg');}
+      () => {utils.rmFiles('./pkg');}
+    )
+    .then(
+      () => {utils.rmFiles('./output');}
     )
     .catch(
       err => console.log('A big error occured', err)

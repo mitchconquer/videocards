@@ -39,7 +39,6 @@ const _mp3Promise = (inputVideo, subItem, index) => {
         reject(err);
       })
       .on('end', () => {
-        console.log(`created ${fileName} as ${index}`);
         resolve({text: subItem.text, media: fileName, index});
       })
       .run();

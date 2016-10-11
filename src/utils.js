@@ -23,14 +23,8 @@ module.exports = {
     });
   },
   rmFiles: (dir) => {
-    // try {
-
-      const files = fs.readdirSync(dir);
-      console.log(`./pkg has ${files.length} files`)
-    // }
-    // catch(err) {
-    //   return;
-    // }
+    const files = fs.readdirSync(dir);
+    console.log(`Cleaning ${dir} directory...`)
 
     if (files.length > 0) {
       files.forEach(file => {
@@ -43,7 +37,5 @@ module.exports = {
         }
       });
     }
-
-    console.log(`./pkg now has ${fs.readdirSync(dir).length} files`)
   }
 };
