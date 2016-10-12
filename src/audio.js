@@ -4,6 +4,8 @@ const utils = require('./utils');
 const Bromise = require('bluebird');
 
 const generateAudio = (inputVideo, subsData) => {
+  utils.ensureDir('./pkg');
+  
   return new Bromise((resolve, reject) => {
     console.log('Slicing video file... )xxxxx[;;;;;;;;;>');
     const noteData = [];

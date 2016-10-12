@@ -27,6 +27,7 @@ subtitles.subsTransform = (inputSubs) => {
 };
 
 subtitles.extract = (inputVideo, callback) => {
+  utils.ensureDir('./output');
   return new Bromise((resolve, reject) => {
     ffmpeg(inputVideo)
     .output(`output/${utils.quickName(inputVideo)}.srt`)

@@ -1,6 +1,22 @@
 const fs = require('fs');
+const chalk = require('chalk');
 
 module.exports = {
+  ensureDir: (givenDir) => {
+    let dir;
+    try {
+      dir = fs.statSync(givenDir);
+    }
+    catch(err) {
+      console.log(chalk.dim(`Creating ${givenDir} directory...`));
+    }
+    if (dir && dir.isDirectory()) {
+      return true;
+    }
+    fs.mkdirSync(`${givenDir}`);
+
+    return fs.statSync(givenDir);
+  },
   quickName: (videoPath) => {
     const regex = /(.*\/)*(.*)\.(.{0,4})/;
     const matches = videoPath.match(regex);
@@ -24,7 +40,7 @@ module.exports = {
   },
   rmFiles: (dir) => {
     const files = fs.readdirSync(dir);
-    console.log(`Cleaning ${dir} directory...`)
+    console.log(chalk.dim(`Cleaning ${dir} directory...`));
 
     if (files.length > 0) {
       files.forEach(file => {
