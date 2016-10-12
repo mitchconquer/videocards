@@ -31,3 +31,5 @@ ffmpeg [documentation](https://ffmpeg.org/ffmpeg.html).
 - [ ] Control audio/video quality
 - [ ] Branch off and improve subtitle parser
 - [ ] Option to name deck separately from video file
+- [ ] Better error handling if unrecognized formats
+- [ ] Auto convert subtitles to acceptable format
