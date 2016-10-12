@@ -13,6 +13,7 @@ const inputSubs = userArgs[1];
 
 subtitles.extract(inputSubs, inputVideo)
   .then(subtitles.subsTransform)
+  .then(subtitles.joinSentences)
   .then(
     subsData => generateAudio(inputVideo, subsData)
   )
