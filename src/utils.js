@@ -1,7 +1,17 @@
 const fs = require('fs');
 const chalk = require('chalk');
 
-module.exports = {
+const utils = {
+  dirExists: (dir) => {
+    let dirExists;
+    try {
+      dirExists = fs.statSync(dir).isDirectory();
+    }
+    catch(err) {
+      return false;
+    }
+    return !!dirExists;
+  },
   ensureDir: (givenDir) => {
     let dir;
     try {
@@ -17,10 +27,12 @@ module.exports = {
 
     return fs.statSync(givenDir);
   },
-  quickName: (videoPath) => {
-    const regex = /(.*\/)*(.*)\.(.{0,4})/;
-    const matches = videoPath.match(regex);
-    return matches[2];
+  getGuid: () => {
+    return 'xxxxxxxxxx'.replace(/[xy]/g, (char) => {
+      const r = Math.random()*16|0;
+      const v = char === 'x' ? r : (r&0x3|0x8);
+      return v.toString(16);
+    });
   },
   padZeros: (id) => {
     const numDigits = 5;
@@ -31,14 +43,16 @@ module.exports = {
     }
     return padded;
   },
-  getGuid: () => {
-    return 'xxxxxxxxxx'.replace(/[xy]/g, (char) => {
-      const r = Math.random()*16|0;
-      const v = char === 'x' ? r : (r&0x3|0x8);
-      return v.toString(16);
-    });
+  quickName: (videoPath) => {
+    const regex = /(.*\/)*(.*)\.(.{0,4})/;
+    const matches = videoPath.match(regex);
+    return matches[2];
   },
   rmFiles: (dir) => {
+    if (!utils.dirExists(dir)) {
+      return false;
+    }
+    
     const files = fs.readdirSync(dir);
     console.log(chalk.dim(`Cleaning ${dir} directory...`));
 
@@ -55,3 +69,5 @@ module.exports = {
     }
   }
 };
+
+module.exports = utils;

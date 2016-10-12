@@ -9,50 +9,25 @@ const Bromise = require('bluebird');
 
 const userArgs = process.argv.slice(2);
 const inputVideo = userArgs[0];
-let inputSubs = userArgs[1];
+const inputSubs = userArgs[1];
 
-
-if (!inputSubs) {
-  subtitles.extract(inputVideo)
-    .then(subtitles.subsTransform)
-    .then(
-      subsData => generateAudio(inputVideo, subsData)
-    )
-    .then(
-      noteData => createAnkiDb(inputVideo, noteData)
-    )
-    .then(
-      dbFile => apkgCreater(dbFile, utils.quickName(inputVideo))
-    )
-    .then(
-      () => {utils.rmFiles('./pkg');}
-    )
-    .then(
-      () => {utils.rmFiles('./output');}
-    )
-    .catch(
-      err => console.log('A big ol\' error occured', err)
-    );
-}
-
-if (inputSubs) {
-  subtitles.subsTransform(inputSubs)
-    .then(
-      subsData => generateAudio(inputVideo, subsData)
-    )
-    .then(
-      noteData => createAnkiDb(inputVideo, noteData)
-    )
-    .then(
-      dbFile => apkgCreater(dbFile, utils.quickName(inputVideo))
-    )
-    .then(
-      () => {utils.rmFiles('./pkg');}
-    )
-    .then(
-      () => {utils.rmFiles('./output');}
-    )
-    .catch(
-      err => console.log('A big ol\' error occured', err)
-    );
-}
+subtitles.extract(inputSubs, inputVideo)
+  .then(subtitles.subsTransform)
+  .then(
+    subsData => generateAudio(inputVideo, subsData)
+  )
+  .then(
+    noteData => createAnkiDb(inputVideo, noteData)
+  )
+  .then(
+    dbFile => apkgCreater(dbFile, utils.quickName(inputVideo))
+  )
+  .then(
+    () => {utils.rmFiles('./pkg');}
+  )
+  .then(
+    () => {utils.rmFiles('./output');}
+  )
+  .catch(
+    err => console.log('A big ol\' error occured', err)
+  );
