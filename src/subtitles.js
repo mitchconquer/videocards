@@ -26,7 +26,12 @@ subtitles.subsTransform = (inputSubs) => {
   });
 };
 
-subtitles.extract = (inputVideo, callback) => {
+subtitles.extract = (inputSubs = null, inputVideo) => {
+  if (inputSubs) {
+    // Just return the subs file if they are given by the user
+    return new Bromise(resolve => resolve(inputSubs));
+  }
+
   utils.ensureDir('./output');
   return new Bromise((resolve, reject) => {
     ffmpeg(inputVideo)
