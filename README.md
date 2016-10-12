@@ -19,7 +19,7 @@ ffmpeg [documentation](https://ffmpeg.org/ffmpeg.html).
 - [ ] Move all subtitle related functionality in index.js to subtitles.js
 - [ ] If the fact that the deck field needs the default deck added first should add that fact to the android wiki page
 - [X] Empty `pkg` directory after creating apkg
-- [ ] Create `pkg` directory if it doesn't already exist
+- [X] Create `pkg` directory if it doesn't already exist
 
 ### Features 
 
