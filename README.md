@@ -34,3 +34,4 @@ ffmpeg [documentation](https://ffmpeg.org/ffmpeg.html).
 - [ ] Option to name deck separately from video file
 - [ ] Better error handling if unrecognized formats
 - [ ] Auto convert subtitles to acceptable format
+- [ ] add cli flag to enable subtitle joining
