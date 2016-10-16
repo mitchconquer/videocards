@@ -30,18 +30,74 @@ subtitles.joinSentences = (subsData, userOptions = {}) => {
   const defaultOptions = {
     autoBufferTime: true,
     reduceBufferBy: 1,
-    bufferTime: 150
+    bufferTime: 150,
+    joinByPunctuation: true,
+    trailingPunctTrigger: '...',
+    leadingPunctTrigger: '...'
   }
   const options = Object.assign(defaultOptions, userOptions);
   console.log(chalk.dim('Parsing subtitles with following options'));
   console.log(options);
 
-  const groupedSubIds = _groupSubIds(subsData, options);
+  let groupedSubIds;
+  if (options.joinByPunctuation) {
+    groupedSubIds = _groupSubsByPunct(subsData, options);
+  } else {
+    groupedSubIds = _groupSubsByTime(subsData, options);
+  }
+
+  console.log(_parseSubGrouping(subsData, groupedSubIds));
 
   return _parseSubGrouping(subsData, groupedSubIds);
 };
 
-const _groupSubIds = (subsData, options) => {
+const _groupSubsByPunct = (subsData, options) => {
+  const groupedSubIds = [];
+  let currentGroup = [];
+
+  const leading = options.leadingPunctTrigger;
+  const trailing = options.trailingPunctTrigger;
+
+  subsData.forEach((sub, index) => {
+    const led = sub.text.startsWith(leading);
+    const trailed = sub.text.endsWith(trailing);
+    let prevIsTrailed;
+    if (index > 0) {
+      prevIsTrailed = subsData[index - 1].text.endsWith(trailed);
+    }
+
+    if (currentGroup.length < 1) {
+      currentGroup.push(sub.id);
+      if (!leading && !trailed) {
+        groupedSubIds.push(currentGroup);
+        currentGroup = [];
+      }
+      return true;
+    }
+
+    if (leading && led) {
+      currentGroup.push(sub.id);
+      if (!trailing || !trailed) {
+        groupedSubIds.push(currentGroup);
+        currentGroup = [];
+      }
+      return true;
+    }
+
+    if (trailing && prevIsTrailed) {
+      currentGroup.push(sub.id);
+      if (!leading & !trailed) {
+        groupedSubIds.push(currentGroup);
+        currentGroup = [];
+        return true;
+      }
+    }
+  });
+  groupedSubIds.push(currentGroup);
+  return groupedSubIds;
+};
+
+const _groupSubsByTime = (subsData, options) => {
   const groupedSubIds = [];
   let prevEndTime;
   let currentGroup = [];

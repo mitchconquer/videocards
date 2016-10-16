@@ -26,9 +26,9 @@ subtitles.extract(inputSubs, inputVideo)
   .then(
     () => {utils.rmFiles('./pkg');}
   )
-  .then(
-    () => {utils.rmFiles('./output');}
-  )
+  // .then(
+  //   () => {utils.rmFiles('./output');}
+  // )
   .catch(
     err => console.log('A big ol\' error occured', err)
   );
