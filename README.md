@@ -20,6 +20,7 @@ ffmpeg [documentation](https://ffmpeg.org/ffmpeg.html).
 - [ ] If the fact that the deck field needs the default deck added first should add that fact to the android wiki page
 - [X] Empty `pkg` directory after creating apkg
 - [X] Create `pkg` directory if it doesn't already exist
+- [ ] Improve time manipulation by creating utility methods to convert times to objects and back
 
 ### Features 
 

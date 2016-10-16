@@ -26,111 +26,40 @@ subtitles.subsTransform = (inputSubs) => {
   });
 };
 
-subtitles.joinSentences = (subsData, userOptions = {}) => {
-  const defaultOptions = {
-    autoBufferTime: true,
-    reduceBufferBy: 1,
-    bufferTime: 150,
-    joinByPunctuation: true,
-    trailingPunctTrigger: '...',
-    leadingPunctTrigger: '...'
-  }
-  const options = Object.assign(defaultOptions, userOptions);
-  console.log(chalk.dim('Parsing subtitles with following options'));
-  console.log(options);
-
-  let groupedSubIds;
-  if (options.joinByPunctuation) {
-    groupedSubIds = _groupSubsByPunct(subsData, options);
-  } else {
-    groupedSubIds = _groupSubsByTime(subsData, options);
-  }
-
-  console.log(_parseSubGrouping(subsData, groupedSubIds));
-
+subtitles.joinSentences = (subsData) => {
+  const groupedSubIds = _groupSubsByPunct(subsData);
   return _parseSubGrouping(subsData, groupedSubIds);
 };
 
-const _groupSubsByPunct = (subsData, options) => {
+const _groupSubsByPunct = (subsData) => {
+  const punctuation = '...';
   const groupedSubIds = [];
-  let currentGroup = [];
-
-  const leading = options.leadingPunctTrigger;
-  const trailing = options.trailingPunctTrigger;
 
   subsData.forEach((sub, index) => {
-    const led = sub.text.startsWith(leading);
-    const trailed = sub.text.endsWith(trailing);
-    let prevIsTrailed;
-    if (index > 0) {
-      prevIsTrailed = subsData[index - 1].text.endsWith(trailed);
-    }
-
-    if (currentGroup.length < 1) {
-      currentGroup.push(sub.id);
-      if (!leading && !trailed) {
-        groupedSubIds.push(currentGroup);
-        currentGroup = [];
-      }
-      return true;
-    }
-
-    if (leading && led) {
-      currentGroup.push(sub.id);
-      if (!trailing || !trailed) {
-        groupedSubIds.push(currentGroup);
-        currentGroup = [];
-      }
-      return true;
-    }
-
-    if (trailing && prevIsTrailed) {
-      currentGroup.push(sub.id);
-      if (!leading & !trailed) {
-        groupedSubIds.push(currentGroup);
-        currentGroup = [];
-        return true;
-      }
+    const notYetAdded = !_flatten(groupedSubIds).includes(sub.id);
+    if (notYetAdded) {
+      groupedSubIds.push(_parse(index));
     }
   });
-  groupedSubIds.push(currentGroup);
-  return groupedSubIds;
-};
 
-const _groupSubsByTime = (subsData, options) => {
-  const groupedSubIds = [];
-  let prevEndTime;
-  let currentGroup = [];
-
-  let bufferTime;
-  if (options.autoBufferTime) {
-    bufferTime = subtitles.timeGapMode(subsData) - options.reduceBufferBy;
-  } else {
-    bufferTime = options.bufferTime;
+  function _parse(index) {
+    let ids = [subsData[index].id];
+    if (subsData[index].text.endsWith(punctuation)){
+      ids = ids.concat(_parse(index + 1));
+    }
+    return ids;
   }
 
-  subsData.forEach(sub => {
-    if (!prevEndTime) {
-      prevEndTime = sub.endTime;
-      currentGroup = [sub.id];
-      return;
+  function _alreadyAdded(multiDimArray, needle) {
+    return _flatten(multiDimArray).includes(needle);
+  }
+
+  function _flatten(input) {
+    if (!Array.isArray(input)) {
+      return input;
     }
-
-    const timeGapMs = _getDurationInSeconds(prevEndTime, sub.startTime) * 1000;
-
-    if (timeGapMs <= bufferTime) {
-      currentGroup.push(sub.id);
-      prevEndTime = sub.endTime;
-      return;
-    }
-
-    groupedSubIds.push(currentGroup);
-    currentGroup = [sub.id];
-    prevEndTime = sub.endTime;
-
-  });
-
-  groupedSubIds.push(currentGroup);
+    return input.reduce((flat, item) => flat.concat(_flatten(item)), []);
+  }
 
   return groupedSubIds;
 };
@@ -142,6 +71,7 @@ const _parseSubGrouping = (subsData, groupedSubIds) => {
   groupedSubIds.forEach(subGroup => {
     let startTime, endTime, id, duration;
     let text = '';
+
     subGroup.forEach((subId, index) => {
       const sub = subsData.filter(sub => sub.id === subId)[0];
       if (index === 0) {
