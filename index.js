@@ -1,5 +1,6 @@
 #! /usr/bin/env node
 
+const initialize = require('./src/initialize');
 const subtitles = require('./src/subtitles');
 const generateAudio = require('./src/audio');
 const utils = require('./src/utils');
@@ -11,21 +12,24 @@ const userArgs = process.argv.slice(2);
 const inputVideo = userArgs[0];
 const inputSubs = userArgs[1];
 
-subtitles.extract(inputSubs, inputVideo)
-  .then(subtitles.subsTransform)
-  .then(subtitles.joinSentences)
+initialize(inputSubs, inputVideo)
   .then(
-    subsData => generateAudio(inputVideo, subsData)
+    subs => subtitles.extract(subs, inputVideo)
   )
-  .then(
-    noteData => createAnkiDb(inputVideo, noteData)
-  )
-  .then(
-    dbFile => apkgCreater(dbFile, utils.quickName(inputVideo))
-  )
-  .then(
-    () => {utils.rmFiles('./pkg');}
-  )
+  // .then(subtitles.subsTransform)
+  // .then(subtitles.joinSentences)
+  // .then(
+  //   subsData => generateAudio(inputVideo, subsData)
+  // )
+  // .then(
+  //   noteData => createAnkiDb(inputVideo, noteData)
+  // )
+  // .then(
+  //   dbFile => apkgCreater(dbFile, utils.quickName(inputVideo))
+  // )
+  // .then(
+  //   () => {utils.rmFiles('./pkg');}
+  // )
   // .then(
   //   () => {utils.rmFiles('./output');}
   // )
