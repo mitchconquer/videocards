@@ -1,14 +1,12 @@
 const ffmpeg = require('fluent-ffmpeg');
 const Bromise = require('bluebird');
 const inquirer = require('inquirer');
+const subtitles = require('./subtitles');
 
 const initializeSubs = (inputSubs, inputVideo) => {
   if (inputSubs) {
     return new Bromise((resolve) => {
-      resolve({
-        userGivenSubs: true,
-        path: inputSubs
-      });
+      resolve(inputSubs);
     });
   }
 
@@ -38,16 +36,13 @@ const initializeSubs = (inputSubs, inputVideo) => {
           }
         ])
         .then(
-          answer => resolve({
-            userGivenSubs: false,
-            index: subStreams.filter(sub => sub.language === answer.language)[0].index
-          })
+          answer => {
+            const index = subStreams.filter(sub => sub.language === answer.language)[0].index;
+            const extractedSubs = subtitles.extract(index, inputVideo);
+            return resolve(extractedSubs);
+          }
         );
       });
-
-    // Wait for user input
-
-    // Return object of requested subtitle file and stream index OR given subtitle files
   });
 };
 

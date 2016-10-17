@@ -130,11 +130,7 @@ const _findMode = (numberSet) => {
   return mode;
 };
 
-subtitles.extract = (inputSubs = null, inputVideo) => {
-  if (inputSubs) {
-    // Just return the subs file if they are given by the user
-    return new Bromise(resolve => resolve(inputSubs));
-  }
+subtitles.extract = (streamIndex, inputVideo) => {
 
   utils.ensureDir('./output');
   return new Bromise((resolve, reject) => {
@@ -142,7 +138,7 @@ subtitles.extract = (inputSubs = null, inputVideo) => {
     .output(`output/${utils.quickName(inputVideo)}.srt`)
     .noVideo()
     .noAudio()
-    .outputOptions('-c:s:0 srt')
+    .outputOptions(`-c:s:${streamIndex} srt`)
     .on('start', () => console.log('Extracting subtitles...'))
     .on('error', (err) => {
       console.log(chalk.red(`An error occured while generating subtitles. ${err.message}`));

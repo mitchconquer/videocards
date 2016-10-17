@@ -13,27 +13,23 @@ const inputVideo = userArgs[0];
 const inputSubs = userArgs[1];
 
 initializeSubs(inputSubs, inputVideo)
-  .then(console.log)
-  // .then(
-  //   subs => console.log('From init', subtitles.extract(inputSubs, inputVideo))
-  // )
-  // .then(subtitles.subsTransform)
-  // .then(subtitles.joinSentences)
-  // .then(
-  //   subsData => generateAudio(inputVideo, subsData)
-  // )
-  // .then(
-  //   noteData => createAnkiDb(inputVideo, noteData)
-  // )
-  // .then(
-  //   dbFile => apkgCreater(dbFile, utils.quickName(inputVideo))
-  // )
-  // .then(
-  //   () => {utils.rmFiles('./pkg');}
-  // )
-  // .then(
-  //   () => {utils.rmFiles('./output');}
-  // )
+  .then(subtitles.subsTransform)
+  .then(subtitles.joinSentences)
+  .then(
+    subsData => generateAudio(inputVideo, subsData)
+  )
+  .then(
+    noteData => createAnkiDb(inputVideo, noteData)
+  )
+  .then(
+    dbFile => apkgCreater(dbFile, utils.quickName(inputVideo))
+  )
+  .then(
+    () => {utils.rmFiles('./pkg');}
+  )
+  .then(
+    () => {utils.rmFiles('./output');}
+  )
   .catch(
     err => console.log('A big ol\' error occured', err)
   );
