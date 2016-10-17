@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-const initialize = require('./src/initialize');
+const initializeSubs = require('./src/initialize');
 const subtitles = require('./src/subtitles');
 const generateAudio = require('./src/audio');
 const utils = require('./src/utils');
@@ -12,10 +12,11 @@ const userArgs = process.argv.slice(2);
 const inputVideo = userArgs[0];
 const inputSubs = userArgs[1];
 
-initialize(inputSubs, inputVideo)
-  .then(
-    subs => subtitles.extract(subs, inputVideo)
-  )
+initializeSubs(inputSubs, inputVideo)
+  .then(console.log)
+  // .then(
+  //   subs => console.log('From init', subtitles.extract(inputSubs, inputVideo))
+  // )
   // .then(subtitles.subsTransform)
   // .then(subtitles.joinSentences)
   // .then(
