@@ -1,10 +1,11 @@
-*.DS_Store
 node_modules
-archer.mkv
 output/*.mp3
-*.mkv
-*.mp3
-*.srt
+pkg/*
 pkg/collection.anki2
 *.apkg
-pkg/*
+*.avi
+*.DS_Store
+*.mkv
+*.mp3
+*.mp4
+*.srt
