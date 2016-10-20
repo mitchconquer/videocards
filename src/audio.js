@@ -8,20 +8,46 @@ const generateAudio = (inputVideo, subsData) => {
   
   return new Bromise((resolve, reject) => {
     console.log('Slicing video file... )xxxxx[;;;;;;;;;>');
-    const noteData = [];
 
-    subsData.forEach((subItem, index) => {
-      noteData.push(
-        _mp3Promise(inputVideo, subItem, index)
-      );
-    });
+    _batchProcess(inputVideo, subsData, resolve);
 
-    Bromise.all(noteData)
-      .then(
-        noteData => resolve(noteData)
-      )
-      .catch(reject);
   });
+};
+
+const _batchProcess = (inputVideo, subsData, batchCompleteCallback) => {
+  let index = 0;
+  const batchQty = 300;
+  const noteData = [];
+
+  function _process() {
+    for (let j = 0; j < batchQty; j++) {
+      const idx = index++;
+      if (idx < subsData.length) {
+        console.log(idx);
+        noteData.push(
+          _mp3Promise(inputVideo, subsData[idx], idx)
+        );
+      }
+    }
+
+    if (index < subsData.length) {
+      console.log('_process if statement');
+      _waitBatch(noteData, _process);
+    }
+    else {
+      _waitBatch(noteData, batchCompleteCallback);
+    }
+  }
+
+  _process();
+};
+
+const _waitBatch = (noteData, callback) => {
+  console.log('_waitBatch');
+  Bromise.all(noteData)
+  .then(
+    () => callback(noteData)
+  );
 };
 
 const _mp3Promise = (inputVideo, subItem, index) => {
