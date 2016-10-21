@@ -14,16 +14,14 @@ const generateAudio = (inputVideo, subsData) => {
   });
 };
 
-const _batchProcess = (inputVideo, subsData, batchCompleteCallback) => {
+const _batchProcess = (inputVideo, subsData, allCompleteCallback) => {
   let index = 0;
   const batchQty = 300;
-  const noteData = [];
 
-  function _process() {
+  function _process(noteData = []) {
     for (let j = 0; j < batchQty; j++) {
       const idx = index++;
       if (idx < subsData.length) {
-        console.log(idx);
         noteData.push(
           _mp3Promise(inputVideo, subsData[idx], idx)
         );
@@ -31,11 +29,10 @@ const _batchProcess = (inputVideo, subsData, batchCompleteCallback) => {
     }
 
     if (index < subsData.length) {
-      console.log('_process if statement');
       _waitBatch(noteData, _process);
     }
     else {
-      _waitBatch(noteData, batchCompleteCallback);
+      _waitBatch(noteData, allCompleteCallback);
     }
   }
 
@@ -43,10 +40,12 @@ const _batchProcess = (inputVideo, subsData, batchCompleteCallback) => {
 };
 
 const _waitBatch = (noteData, callback) => {
-  console.log('_waitBatch');
   Bromise.all(noteData)
   .then(
-    () => callback(noteData)
+    result => callback(result)
+  )
+  .catch(
+    error => {throw error;}
   );
 };
 
