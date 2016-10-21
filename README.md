@@ -21,6 +21,7 @@ ffmpeg [documentation](https://ffmpeg.org/ffmpeg.html).
 - [X] Empty `pkg` directory after creating apkg
 - [X] Create `pkg` directory if it doesn't already exist
 - [ ] Improve time manipulation by creating utility methods to convert times to objects and back
+- [ ] Convert video to MP3 before cutting it up will save memory?
 
 ### Features 
 
