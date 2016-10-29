@@ -17,7 +17,7 @@
     "url": "https://github.com/mitchconquer/videocards/issues"
   },
   "homepage": "https://github.com/mitchconquer/videocards#readme",
-  "dependencies": {
+  "bundledDependencies": {
     "archiver": "^1.1.0",
     "bluebird": "^3.4.6",
     "chalk": "^1.1.3",
