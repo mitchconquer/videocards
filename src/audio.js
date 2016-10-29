@@ -22,6 +22,7 @@ const _batchProcess = (inputVideo, subsData, allCompleteCallback) => {
     for (let j = 0; j < batchQty; j++) {
       const idx = index++;
       if (idx < subsData.length) {
+        console.log(idx);
         noteData.push(
           _mp3Promise(inputVideo, subsData[idx], idx)
         );

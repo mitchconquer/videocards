@@ -12,6 +12,18 @@ const userArgs = process.argv.slice(2);
 const inputVideo = userArgs[0];
 const inputSubs = userArgs[1];
 
+exports.initializeSubs = (inputSubs, inputVideo) => {
+  let subtiles;
+  initializeSubs(inputSubs, inputVideo)
+    .then(
+      subs => {
+        subtitles = subtitles.subsTransform(subs);
+      }
+    );
+
+  return subtitles;
+};
+
 initializeSubs(inputSubs, inputVideo)
   .then(subtitles.subsTransform)
   .then(subtitles.joinSentences)
