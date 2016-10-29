@@ -1,5 +1,3 @@
-#! /usr/bin/env node
-
 const initializeSubs = require('./src/initialize');
 const subtitles = require('./src/subtitles');
 // const generateAudio = require('./src/audio');
