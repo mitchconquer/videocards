@@ -10,17 +10,8 @@ const subtitles = require('./src/subtitles');
 // const inputVideo = userArgs[0];
 // const inputSubs = userArgs[1];
 
-exports.initializeSubs = (inputSubs, inputVideo) => {
-  let subtitles;
-  initializeSubs(inputSubs, inputVideo)
-    .then(
-      subs => {
-        subtitles = subtitles.subsTransform(subs);
-      }
-    );
-
-  return subtitles;
-};
+exports.initializeSubs = initializeSubs;
+exports.transformSubs = subtitles.subsTransform;
 
 // initializeSubs(inputSubs, inputVideo)
 //   .then(subtitles.subsTransform)

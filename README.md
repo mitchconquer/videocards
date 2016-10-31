@@ -10,6 +10,16 @@ Run `gencards videofile [subsfile]` -->
 
 ## Notes
 
+If using with webpack, there is a conflict with fluent-ffmpeg so you must include this in your webpack config file.
+
+```js
+resolve: {
+  alias: {
+    'fluent-ffmpeg': 'fluent-ffmpeg/lib/fluent-ffmpeg.js'
+  }
+}
+```
+
 ffmpeg [documentation](https://ffmpeg.org/ffmpeg.html).
 
 ## Ideas
