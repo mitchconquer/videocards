@@ -1,9 +1,10 @@
+const path = require('path');
 const initializeSubs = require('./src/initialize');
 const subtitles = require('./src/subtitles');
-// const generateAudio = require('./src/audio');
-// const utils = require('./src/utils');
-// const createAnkiDb = require('./src/database');
-// const apkgCreater = require('./src/archiver');
+const generateAudio = require('./src/audio');
+const createAnkiDb = require('./src/database');
+const apkgCreater = require('./src/archiver');
+const utils = require('./src/utils');
 // const Bromise = require('bluebird');
 
 // const userArgs = process.argv.slice(2);
@@ -12,6 +13,12 @@ const subtitles = require('./src/subtitles');
 
 exports.initializeSubs = initializeSubs;
 exports.transformSubs = subtitles.subsTransform;
+exports.generateAudio = generateAudio;
+exports.getAudioDir = () => path.resolve('pkg');
+// exports.createAnkiDb = createAnkiDb;
+// exports.createApkg = apkgCreater;
+// exports.rmFiles = utils.rmFiles;
+// exports.quickName = utils.quickname;
 
 // initializeSubs(inputSubs, inputVideo)
 //   .then(subtitles.subsTransform)

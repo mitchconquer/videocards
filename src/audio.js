@@ -2,15 +2,14 @@ const ffmpeg = require('fluent-ffmpeg');
 const chalk = require('chalk');
 const utils = require('./utils');
 const Bromise = require('bluebird');
+const path = require('path');
 
 const generateAudio = (inputVideo, subsData) => {
   utils.ensureDir('./pkg');
   
   return new Bromise((resolve, reject) => {
     console.log('Slicing video file... )xxxxx[;;;;;;;;;>');
-
     _batchProcess(inputVideo, subsData, resolve);
-
   });
 };
 
@@ -22,7 +21,6 @@ const _batchProcess = (inputVideo, subsData, allCompleteCallback) => {
     for (let j = 0; j < batchQty; j++) {
       const idx = index++;
       if (idx < subsData.length) {
-        console.log(idx);
         noteData.push(
           _mp3Promise(inputVideo, subsData[idx], idx)
         );
@@ -33,15 +31,16 @@ const _batchProcess = (inputVideo, subsData, allCompleteCallback) => {
       _waitBatch(noteData, _process);
     }
     else {
-      _waitBatch(noteData, allCompleteCallback);
+      console.log(`Processed ${noteData.length} audio files`);
+      return _waitBatch(noteData, allCompleteCallback);
     }
   }
 
-  _process();
+  return _process();
 };
 
 const _waitBatch = (noteData, callback) => {
-  Bromise.all(noteData)
+  return Bromise.all(noteData)
   .then(
     result => callback(result)
   )
@@ -57,7 +56,7 @@ const _mp3Promise = (inputVideo, subItem, index) => {
     ffmpeg(inputVideo)
       .seekInput(subItem.startTime)
       .inputOptions('-vn')
-      .output(`pkg/${index}`)
+      .output(`pkg/${fileName}`)
       .format('mp3')
       .outputOptions('-write_xing', 0) // Fixes Mac MP3 length error
       .duration(subItem.duration)
