@@ -38,6 +38,7 @@ const _addMedia = (noteData) => {
   const mediaData = {};
   noteData.forEach(note => {
     mediaData[`${note.index}`] = note.media;
+    fs.renameSync(`./pkg/${note.media}`, `./pkg/${note.index}`);
   });
   fs.writeFileSync('./pkg/media', JSON.stringify(mediaData));
 };

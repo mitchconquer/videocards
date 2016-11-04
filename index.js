@@ -15,10 +15,10 @@ exports.initializeSubs = initializeSubs;
 exports.transformSubs = subtitles.subsTransform;
 exports.generateAudio = generateAudio;
 exports.getAudioDir = () => path.resolve('pkg');
-// exports.createAnkiDb = createAnkiDb;
-// exports.createApkg = apkgCreater;
-// exports.rmFiles = utils.rmFiles;
-// exports.quickName = utils.quickname;
+exports.createAnkiDb = createAnkiDb;
+exports.createApkg = apkgCreater;
+exports.rmFiles = utils.rmFiles;
+exports.quickName = utils.quickName;
 
 // initializeSubs(inputSubs, inputVideo)
 //   .then(subtitles.subsTransform)
