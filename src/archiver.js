@@ -3,9 +3,10 @@ const archiver = require('archiver');
 const chalk = require('chalk');
 const Bromise = require('bluebird');
 
-const apkgCreater = (dbFile, quickName) => {
+const apkgCreater = (dbFile, quickName, directory) => {
   return new Bromise((resolve, reject) => {
-    const output = fs.createWriteStream(`./${quickName}.apkg`);
+    const outputDir =  `${( directory || '.' )}/${quickName}.apkg`;
+    const output = fs.createWriteStream(outputDir);
     const archive = archiver('zip');
 
     output
