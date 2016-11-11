@@ -66,7 +66,16 @@ const _mp3Promise = (inputVideo, subItem, index) => {
         reject(err);
       })
       .on('end', () => {
-        resolve({text: subItem.text, media: fileName, index});
+        const mediaItem = {
+          id: subItem.id,
+          duration: subItem.duration,
+          startTime: subItem.startTime,
+          endTime: subItem.endTime,
+          text: subItem.text,
+          media: fileName,
+          index
+        };
+        resolve(mediaItem);
       })
       .run();
   });
