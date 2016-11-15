@@ -3,6 +3,7 @@ const chalk = require('chalk');
 const utils = require('./utils');
 const Bromise = require('bluebird');
 const path = require('path');
+const fs = require('fs');
 
 const generateAudio = (inputVideo, subsData) => {
   utils.ensureDir('./pkg');
@@ -10,6 +11,21 @@ const generateAudio = (inputVideo, subsData) => {
   return new Bromise((resolve, reject) => {
     console.log('Slicing video file... )xxxxx[;;;;;;;;;>');
     _batchProcess(inputVideo, subsData, resolve);
+  });
+};
+
+const updateAudio = (inputVideo, subData) => {
+  // remove existing file
+  fs.unlinkSync(`./pkg/${subData.media}`);
+
+  return new Bromise((resolve, reject) => {
+    _mp3Promise(inputVideo, subData, subData.index)
+      .then(
+        newMedia => resolve(newMedia)
+      )
+      .catch(
+        err => reject(err)
+      );
   });
 };
 
@@ -52,7 +68,6 @@ const _waitBatch = (noteData, callback) => {
 const _mp3Promise = (inputVideo, subItem, index) => {
   return new Bromise((resolve, reject) => {
     const fileName = `${utils.quickName(inputVideo).slice(0, 20)}_${utils.padZeros(subItem.id)}.mp3`;
-
     ffmpeg(inputVideo)
       .seekInput(subItem.startTime)
       .inputOptions('-vn')
@@ -81,4 +96,4 @@ const _mp3Promise = (inputVideo, subItem, index) => {
   });
 };
 
-module.exports = generateAudio;
+module.exports = { generateAudio, updateAudio };
