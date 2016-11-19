@@ -2,17 +2,31 @@ const fs = require('fs');
 const chalk = require('chalk');
 
 const utils = {
-  dirExists: (dir) => {
-    let dirExists;
-    try {
-      dirExists = fs.statSync(dir).isDirectory();
+  combineSubtitles: function(subtitle1, subtitle2) {
+    let target, source;
+    if (subtitle1.index < subtitle2.index) {
+      target = subtitle1;
+      source = subtitle2;
+    } else {
+      target = subtitle2;
+      source = subtitle1;
     }
-    catch(err) {
-      return false;
-    }
-    return !!dirExists;
+
+    const merged = Object.assign({}, target);
+    merged.text = `${target.text} ${source.text}`;
+    merged.endTime = source.endTime;
+    merged.duration = utils.durationInSeconds(target.startTime, source.endTime);
+
+    return merged;
   },
-  ensureDir: (givenDir) => {
+
+  durationInSeconds: function(startTime, endTime) {
+    const end = utils.timeInMSeconds(endTime);
+    const start = utils.timeInMSeconds(startTime);
+    return (end - start) / 1000;
+  },
+
+  ensureDir: function(givenDir) {
     let dir;
     try {
       dir = fs.statSync(givenDir);
@@ -27,14 +41,16 @@ const utils = {
 
     return fs.statSync(givenDir);
   },
-  getGuid: () => {
+
+  getGuid: function() {
     return 'xxxxxxxxxx'.replace(/[xy]/g, (char) => {
       const r = Math.random()*16|0;
       const v = char === 'x' ? r : (r&0x3|0x8);
       return v.toString(16);
     });
   },
-  padZeros: (id) => {
+
+  padZeros: function(id) {
     const numDigits = 5;
     const padding = (numDigits - `${id}`.length);
     let padded = `${id}`;
@@ -43,13 +59,15 @@ const utils = {
     }
     return padded;
   },
-  quickName: (videoPath) => {
+
+  quickName: function(videoPath) {
     const regex = /(.*\/)*(.*)\.(.{0,4})/;
     const matches = videoPath.match(regex);
     return matches[2];
   },
-  rmFiles: (dir) => {
-    if (!utils.dirExists(dir)) {
+
+  rmFiles: function(dir) {
+    if (!_dirExists(dir)) {
       return false;
     }
     
@@ -67,7 +85,51 @@ const utils = {
         }
       });
     }
+  },
+
+  rmFile: function(file) {
+    const filePath = `./pkg/${file}`;
+    if (!_fileExists(filePath)) {
+      return;
+    }
+    if (fs.statSync(filePath).isFile()) {
+      fs.unlinkSync(filePath);
+    }
+  },
+
+  timeInMSeconds: function(timeString) {
+    const timeArray = timeString.split(':');
+    const hours = parseInt(timeArray[0]);
+    const minutes = parseInt(timeArray[1]);
+    const separator = (timeArray[2].indexOf(',') > -1) ? ',' : '.';
+    const seconds = parseInt(timeArray[2].split(separator)[0]);
+    const mSeconds = parseInt(timeArray[2].split(separator)[1]);
+
+    return mSeconds + (seconds * 1000) + (minutes * 60 * 1000) + (hours * 60 * 60 * 1000);
   }
 };
 
 module.exports = utils;
+
+
+const _dirExists = (dir) => {
+  let dirExists;
+  try {
+    dirExists = fs.statSync(dir).isDirectory();
+  }
+  catch(err) {
+    return false;
+  }
+  return !!dirExists;
+};
+
+const _fileExists = (file) => {
+  let fileExists;
+  try {
+    fileExists = fs.statSync(file).isFile();
+  }
+  catch(err) {
+    return false;
+  }
+  return !!fileExists;
+};

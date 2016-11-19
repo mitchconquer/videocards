@@ -17,7 +17,7 @@ subtitles.subsTransform = (inputSubs) => {
     resolve(subsData.map(subItem => {
       return {
         id: parseInt(subItem.id),
-        duration: _getDurationInSeconds(subItem.startTime, subItem.endTime),
+        duration: utils.durationInSeconds(subItem.startTime, subItem.endTime),
         startTime: subItem.startTime.replace(',', '.'),
         endTime: subItem.endTime.replace(',', '.'),
         text: subItem.text.replace('\n', ' ')
@@ -80,7 +80,7 @@ const _parseSubGrouping = (subsData, groupedSubIds) => {
       }
       if (index === subGroup.length - 1) {
         endTime = sub.endTime;
-        duration = _getDurationInSeconds(startTime, endTime) + durationPadding;
+        duration = utils.durationInSeconds(startTime, endTime) + durationPadding;
       }
       text += ` ${sub.text}`;
     });
@@ -100,7 +100,7 @@ subtitles.timeGapMode = (subsData) => {
       return;
     }
 
-    const timeGapMs = _getDurationInSeconds(prevEndTime, sub.startTime) * 1000;
+    const timeGapMs = utils.durationInSeconds(prevEndTime, sub.startTime) * 1000;
 
     timeGaps.push(timeGapMs);
   });
@@ -151,23 +151,6 @@ subtitles.extract = (streamIndex, inputVideo) => {
     })
     .run()
   });
-};
-
-const _getDurationInSeconds = (startTime, endTime) => {
-  const end = _timeInMSeconds(endTime);
-  const start = _timeInMSeconds(startTime);
-  return (end - start) / 1000;
-};
-
-const _timeInMSeconds = (timeString) => {
-  const timeArray = timeString.split(':');
-  const hours = parseInt(timeArray[0]);
-  const minutes = parseInt(timeArray[1]);
-  const separator = (timeArray[2].indexOf(',') > -1) ? ',' : '.'; 
-  const seconds = parseInt(timeArray[2].split(separator)[0]);
-  const mSeconds = parseInt(timeArray[2].split(separator)[1]);
-
-  return mSeconds + (seconds * 1000) + (minutes * 60 * 1000) + (hours * 60 * 60 * 1000);
 };
 
 module.exports = subtitles;

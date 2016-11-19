@@ -19,8 +19,10 @@ exports.updateAudio = updateAudio;
 exports.getAudioDir = () => path.resolve('pkg');
 exports.createAnkiDb = createAnkiDb;
 exports.createApkg = apkgCreater;
+exports.rmFile = utils.rmFile;
 exports.rmFiles = utils.rmFiles;
 exports.quickName = utils.quickName;
+exports.combineSubtitles = utils.combineSubtitles;
 
 
 // initializeSubs(inputSubs, inputVideo)
