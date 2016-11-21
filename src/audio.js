@@ -16,7 +16,7 @@ const generateAudio = (inputVideo, subsData) => {
 
 const updateAudio = (inputVideo, subData) => {
   // remove existing file
-  fs.unlinkSync(`./pkg/${subData.media}`);
+  // fs.unlinkSync(`./pkg/${subData.media}`);
 
   return new Bromise((resolve, reject) => {
     _mp3Promise(inputVideo, subData, subData.index)
@@ -67,7 +67,12 @@ const _waitBatch = (noteData, callback) => {
 
 const _mp3Promise = (inputVideo, subItem, index) => {
   return new Bromise((resolve, reject) => {
-    const fileName = `${utils.quickName(inputVideo).slice(0, 20)}_${utils.padZeros(subItem.id)}.mp3`;
+    let fileName;
+    if (subItem.media) {
+      fileName = subItem.media;
+    } else {
+      fileName = `${utils.quickName(inputVideo).slice(0, 20)}_${utils.padZeros(subItem.id)}.mp3`;
+    }
     ffmpeg(inputVideo)
       .seekInput(subItem.startTime)
       .inputOptions('-vn')

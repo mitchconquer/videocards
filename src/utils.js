@@ -1,8 +1,10 @@
 const fs = require('fs');
 const chalk = require('chalk');
+const crypto = require('crypto');
 
 const utils = {
-  combineSubtitles: function(subtitle1, subtitle2) {
+  combineSubtitles: function(subtitle1, subtitle2, options = {replaceMedia: false}) {
+    const { replaceMedia } = options;
     let target, source;
     if (subtitle1.index < subtitle2.index) {
       target = subtitle1;
@@ -16,6 +18,10 @@ const utils = {
     merged.text = `${target.text} ${source.text}`;
     merged.endTime = source.endTime;
     merged.duration = utils.durationInSeconds(target.startTime, source.endTime);
+
+    if (!replaceMedia) {
+      merged.media = this.updateFileVersionHash(merged.media);
+    }
 
     return merged;
   },
@@ -64,6 +70,20 @@ const utils = {
     const regex = /(.*\/)*(.*)\.(.{0,4})/;
     const matches = videoPath.match(regex);
     return matches[2];
+  },
+
+  updateFileVersionHash: function(file) {
+    // Check if there is already a version hash
+    let fileName = this.quickName(file);
+    const hashRegex = /(\.[a-z0-9]*)/;
+    const matches = fileName.match(hashRegex)
+    if (matches && matches.length > 0) {
+      // Remove hash if already exists
+      fileName = fileName.slice(0, (-1 * matches[0].length));
+    }
+    // Add randomHash
+    const randomHash = crypto.randomBytes(4).toString('hex');
+    return `${fileName}.${randomHash}.mp3`;
   },
 
   rmFiles: function(dir) {

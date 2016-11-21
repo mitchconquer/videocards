@@ -21,6 +21,7 @@ exports.createAnkiDb = createAnkiDb;
 exports.createApkg = apkgCreater;
 exports.rmFile = utils.rmFile;
 exports.rmFiles = utils.rmFiles;
+exports.updateFileVersionHash = utils.updateFileVersionHash;
 exports.quickName = utils.quickName;
 exports.combineSubtitles = utils.combineSubtitles;
 
