@@ -26,108 +26,25 @@ subtitles.subsTransform = (inputSubs) => {
   });
 };
 
-subtitles.joinSentences = (subsData) => {
-  const groupedSubIds = _groupSubsByPunct(subsData);
-  return _parseSubGrouping(subsData, groupedSubIds);
-};
+subtitles.listEmbeded = (inputVideo) => {
+  // List all available subtitles
+  return new Bromise((resolve, reject) => {
+    ffmpeg(inputVideo)
+      .ffprobe((err, data) => {
+        if (err) {
+          reject(err);
+        }
 
-const _groupSubsByPunct = (subsData) => {
-  const punctuation = '...';
-  const groupedSubIds = [];
+        const subStreams = data.streams
+          .filter(stream => stream.codec_type === 'subtitle')
+          .map(stream => ({
+            language: stream.tags.language,
+            index: stream.index
+          }));
 
-  subsData.forEach((sub, index) => {
-    const notYetAdded = !_flatten(groupedSubIds).includes(sub.id);
-    if (notYetAdded) {
-      groupedSubIds.push(_parse(index));
-    }
+          resolve(subStreams);
+      });
   });
-
-  function _parse(index) {
-    let ids = [subsData[index].id];
-    if (subsData[index].text.endsWith(punctuation)){
-      ids = ids.concat(_parse(index + 1));
-    }
-    return ids;
-  }
-
-  function _alreadyAdded(multiDimArray, needle) {
-    return _flatten(multiDimArray).includes(needle);
-  }
-
-  function _flatten(input) {
-    if (!Array.isArray(input)) {
-      return input;
-    }
-    return input.reduce((flat, item) => flat.concat(_flatten(item)), []);
-  }
-
-  return groupedSubIds;
-};
-
-const _parseSubGrouping = (subsData, groupedSubIds) => {
-  const durationPadding = 0.1;
-
-  const parsedSubs = [];
-  groupedSubIds.forEach(subGroup => {
-    let startTime, endTime, id, duration;
-    let text = '';
-
-    subGroup.forEach((subId, index) => {
-      const sub = subsData.filter(sub => sub.id === subId)[0];
-      if (index === 0) {
-        startTime = sub.startTime;
-        id = sub.id;
-      }
-      if (index === subGroup.length - 1) {
-        endTime = sub.endTime;
-        duration = utils.durationInSeconds(startTime, endTime) + durationPadding;
-      }
-      text += ` ${sub.text}`;
-    });
-    parsedSubs.push({id, duration, startTime, endTime, text});
-  });
-  return parsedSubs;
-};
-
-subtitles.timeGapMode = (subsData) => {
-  const timeGaps = [];
-  let prevEndTime;
-  
-  subsData.forEach(sub => {
-    if (!prevEndTime) {
-      prevEndTime = sub.endTime;
-      currentGroup = [sub.id];
-      return;
-    }
-
-    const timeGapMs = utils.durationInSeconds(prevEndTime, sub.startTime) * 1000;
-
-    timeGaps.push(timeGapMs);
-  });
-
-  return _findMode(timeGaps);
-}
-
-const _findMode = (numberSet) => {
-  const totals = {};
-  numberSet.forEach(num => {
-    if (totals[num]) {
-      totals[num]++;
-    } else {
-      totals[num] = 1;
-    }
-  });
-
-  let mode;
-  let count = 0;
-  Object.keys(totals).forEach(num => {
-    if (totals[num] > count) {
-      count = totals[num];
-      mode = num;
-    }
-  });
-
-  return mode;
 };
 
 subtitles.extract = (streamIndex, inputVideo) => {

@@ -28,7 +28,6 @@ exports.combineSubtitles = utils.combineSubtitles;
 
 // initializeSubs(inputSubs, inputVideo)
 //   .then(subtitles.subsTransform)
-//   .then(subtitles.joinSentences)
 //   .then(
 //     subsData => generateAudio(inputVideo, subsData)
 //   )
