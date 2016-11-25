@@ -49,10 +49,10 @@ subtitles.listEmbeded = (inputVideo) => {
 
 subtitles.extract = (streamIndex, inputVideo) => {
 
-  utils.ensureDir('./output');
+  utils.ensureDir('./pkg');
   return new Bromise((resolve, reject) => {
     ffmpeg(inputVideo)
-    .output(`output/${utils.quickName(inputVideo)}.srt`)
+    .output(`pkg/${utils.quickName(inputVideo)}.srt`)
     .noVideo()
     .noAudio()
     .outputOptions(`-c:s:${streamIndex} srt`)
@@ -63,7 +63,7 @@ subtitles.extract = (streamIndex, inputVideo) => {
     })
     .on('end', () => {
       console.log(chalk.green('Successfully extracted subtitles'));
-      inputSubs = `output/${utils.quickName(inputVideo)}.srt`;
+      inputSubs = `pkg/${utils.quickName(inputVideo)}.srt`;
       resolve(inputSubs);
     })
     .run()
