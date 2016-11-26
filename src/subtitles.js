@@ -26,7 +26,7 @@ subtitles.subsTransform = (inputSubs) => {
   });
 };
 
-subtitles.listEmbeded = (inputVideo) => {
+subtitles.listEmbedded = (inputVideo) => {
   // List all available subtitles
   return new Bromise((resolve, reject) => {
     ffmpeg(inputVideo)
