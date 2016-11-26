@@ -63,7 +63,7 @@ subtitles.extract = (streamIndex, inputVideo) => {
     })
     .on('end', () => {
       console.log(chalk.green('Successfully extracted subtitles'));
-      inputSubs = `pkg/${utils.quickName(inputVideo)}.srt`;
+      inputSubs = `./pkg/${utils.quickName(inputVideo)}.srt`;
       resolve(inputSubs);
     })
     .run()
