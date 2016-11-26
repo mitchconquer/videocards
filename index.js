@@ -17,6 +17,7 @@ exports.transformSubs = subtitles.subsTransform;
 exports.generateAudio = generateAudio;
 exports.updateAudio = updateAudio;
 exports.extractSubs = subtitles.extract;
+exports.listEmbededSubs = subtitles.listEmbeded;
 exports.getAudioDir = () => path.resolve('pkg');
 exports.createAnkiDb = createAnkiDb;
 exports.createApkg = apkgCreater;
