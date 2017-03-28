@@ -1,6 +1,6 @@
 {
   "name": "videocards",
-  "version": "1.15.0",
+  "version": "1.16.0",
   "description": "Generate language-learning flashcards from video and subtitle files",
   "preferGlobal": true,
   "main": "index.js",
@@ -37,8 +37,13 @@
     "env": {
       "node": true
     },
-    "plugins": ["node"],
-    "extends": ["eslint:recommended", "plugin:node/recommended"],
+    "plugins": [
+      "node"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "plugin:node/recommended"
+    ],
     "rules": {
       "no-console": 0
     }
