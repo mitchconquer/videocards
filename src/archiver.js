@@ -1,11 +1,12 @@
 const fs = require('fs');
+const path = require('path');
 const archiver = require('archiver');
 const chalk = require('chalk');
 const Bromise = require('bluebird');
 
 const apkgCreater = (dbFile, quickName, directory) => {
   return new Bromise((resolve, reject) => {
-    const outputDir =  `${( directory || '.' )}/${quickName}.apkg`;
+    const outputDir = path.join(`${( directory || '.' )}`, `${quickName}.apkg`);
     const output = fs.createWriteStream(outputDir);
     const archive = archiver('zip');
 

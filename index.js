@@ -6,11 +6,6 @@ const updateAudio = require('./src/audio').updateAudio;
 const createAnkiDb = require('./src/database');
 const apkgCreater = require('./src/archiver');
 const utils = require('./src/utils');
-// const Bromise = require('bluebird');
-
-// const userArgs = process.argv.slice(2);
-// const inputVideo = userArgs[0];
-// const inputSubs = userArgs[1];
 
 exports.initializeSubs = initializeSubs;
 exports.transformSubs = subtitles.subsTransform;
@@ -27,6 +22,9 @@ exports.updateFileVersionHash = utils.updateFileVersionHash;
 exports.quickName = utils.quickName;
 exports.combineSubtitles = utils.combineSubtitles;
 
+// const userArgs = process.argv.slice(2);
+// const inputVideo = userArgs[0];
+// const inputSubs = userArgs[1];
 
 // initializeSubs(inputSubs, inputVideo)
 //   .then(subtitles.subsTransform)
