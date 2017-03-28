@@ -25,7 +25,7 @@ const apkgCreater = (dbFile, quickName, directory) => {
       .on('end', () => {
         resolve();
       })
-      .directory('./pkg', '')
+      .directory(path.join('pkg'), path.join(''))
       .pipe(output);
 
     archive
