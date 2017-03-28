@@ -1,14 +1,13 @@
 const sqlite = require('sqlite3').verbose();
 const fs = require('fs');
+const path = require('path');
 const utils = require('./utils');
-const apkgCreater = require('./archiver');
-const chalk = require('chalk');
 const crypto = require('crypto');
 const Bromise = require('bluebird');
 
 const createAnkiDb = (inputVideo, noteData) => {
-  return new Bromise((resolve, reject) => {
-    dbFile = `./pkg/collection.anki2`;
+  return new Bromise(resolve => {
+    const dbFile = path.join(`pkg`, `collection.anki2`);
     console.log('Creating db file...');
 
     const fileDescriptor = fs.openSync(dbFile, 'w');
@@ -38,9 +37,9 @@ const _addMedia = (noteData) => {
   const mediaData = {};
   noteData.forEach(note => {
     mediaData[`${note.index}`] = note.media;
-    fs.renameSync(`./pkg/${note.media}`, `./pkg/${note.index}`);
+    fs.renameSync(path.join(`pkg`, `${note.media}`), path.join(`pkg`, `${note.index}`));
   });
-  fs.writeFileSync('./pkg/media', JSON.stringify(mediaData));
+  fs.writeFileSync(path.join('pkg', 'media'), JSON.stringify(mediaData));
 };
 
 const _addCards = (db, noteData, modelId) => {

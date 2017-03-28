@@ -3,12 +3,11 @@ const chalk = require('chalk');
 const utils = require('./utils');
 const Bromise = require('bluebird');
 const path = require('path');
-const fs = require('fs');
 
 const generateAudio = (inputVideo, subsData) => {
-  utils.ensureDir('./pkg');
+  utils.ensureDir(path.join('pkg'));
   
-  return new Bromise((resolve, reject) => {
+  return new Bromise(resolve => {
     console.log('Slicing video file... )xxxxx[;;;;;;;;;>');
     _batchProcess(inputVideo, subsData, resolve);
   });
@@ -76,7 +75,7 @@ const _mp3Promise = (inputVideo, subItem, index) => {
     ffmpeg(inputVideo)
       .seekInput(subItem.startTime)
       .inputOptions('-vn')
-      .output(`pkg/${fileName}`)
+      .output(path.join(`pkg`, `${fileName}`))
       .format('mp3')
       .outputOptions('-write_xing', 0) // Fixes Mac MP3 length error
       .duration(subItem.duration)

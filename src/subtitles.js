@@ -1,16 +1,15 @@
 const fs = require('fs');
+const path = require('path');
 const subsParser = require('subtitles-parser');
 const ffmpeg = require('fluent-ffmpeg');
 const chalk = require('chalk');
 const utils = require('./utils');
 const Bromise = require('bluebird');
-const startBuffer = 200;
-const endBuffer = 200;
 
 const subtitles = {};
 
 subtitles.subsTransform = (inputSubs) => {
-  return new Bromise((resolve, reject) => {
+  return new Bromise(resolve => {
     const subFile = fs.readFileSync(inputSubs,'utf8');
     const subsData = subsParser.fromSrt(subFile);
 
@@ -49,10 +48,10 @@ subtitles.listEmbedded = (inputVideo) => {
 
 subtitles.extract = (streamIndex, inputVideo) => {
 
-  utils.ensureDir('./pkg');
+  utils.ensureDir(path.join('pkg'));
   return new Bromise((resolve, reject) => {
     ffmpeg(inputVideo)
-    .output(`pkg/${utils.quickName(inputVideo)}.srt`)
+    .output(path.join(`pkg`, `${utils.quickName(inputVideo)}.srt`))
     .noVideo()
     .noAudio()
     .outputOptions(`-c:s:${streamIndex} srt`)
@@ -63,7 +62,7 @@ subtitles.extract = (streamIndex, inputVideo) => {
     })
     .on('end', () => {
       console.log(chalk.green('Successfully extracted subtitles'));
-      inputSubs = `./pkg/${utils.quickName(inputVideo)}.srt`;
+      const inputSubs = path.join(`pkg`, `${utils.quickName(inputVideo)}.srt`);
       resolve(inputSubs);
     })
     .run()

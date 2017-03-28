@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const chalk = require('chalk');
 const crypto = require('crypto');
 
@@ -96,7 +97,7 @@ const utils = {
 
     if (files.length > 0) {
       files.forEach(file => {
-        const filePath = `${dir}/${file}`;
+        const filePath = path.join(`${dir}`, `${file}`);
         if (fs.statSync(filePath).isFile()) {
           fs.unlinkSync(filePath);
         }
@@ -108,7 +109,7 @@ const utils = {
   },
 
   rmFile: function(file) {
-    const filePath = `./pkg/${file}`;
+    const filePath = path.join(`pkg`, `${file}`);
     if (!_fileExists(filePath)) {
       return;
     }
