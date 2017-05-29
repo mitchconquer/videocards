@@ -5,6 +5,7 @@ const ffmpeg = require('fluent-ffmpeg');
 const chalk = require('chalk');
 const utils = require('./utils');
 const Bromise = require('bluebird');
+const ffprobePath = require('ffprobe-static').path;
 
 const subtitles = {};
 
@@ -28,6 +29,7 @@ subtitles.subsTransform = (inputSubs) => {
 subtitles.listEmbedded = (inputVideo) => {
   // List all available subtitles
   return new Bromise((resolve, reject) => {
+    ffmpeg.setFfprobePath(ffprobePath);
     ffmpeg(inputVideo)
       .ffprobe((err, data) => {
         if (err) {
