@@ -1,6 +1,6 @@
 {
   "name": "videocards",
-  "version": "1.19.0",
+  "version": "1.20.0",
   "description": "Generate language-learning flashcards from video and subtitle files",
   "preferGlobal": true,
   "main": "index.js",
