@@ -32,6 +32,7 @@ subtitles.listEmbedded = (inputVideo) => {
       .ffprobe((err, data) => {
         if (err) {
           reject(err);
+          return;
         }
 
         const subStreams = data.streams
